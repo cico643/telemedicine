@@ -1,0 +1,26 @@
+### Create a new patient
+POST http://localhost:3000/patients/signup
+Content-Type: application/json
+
+{
+    "email": "test1@test.com",
+    "password": "123test",
+    "name": "Cihat",
+    "surname": "Yeşildağ",
+    "address": "xyz mh. abc sk. No:56 Osmangazi/Bursa",
+    "phoneNumber": "+905354330771",
+    "type" : "patient"
+}
+
+### Sign in as an existing patient
+POST http://localhost:3000/patients/signin
+Content-Type: application/json
+
+{
+    "email": "test1@test.com",
+    "password": "123test",
+    "type": "patient"
+}
+
+### Get the currently signed in patient
+GET http://localhost:3000/patients/currentUser
