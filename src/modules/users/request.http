@@ -24,3 +24,32 @@ Content-Type: application/json
 
 ### Get the currently signed in patient
 GET http://localhost:3000/patients/currentUser
+
+
+### Create a new doctor
+POST http://localhost:3000/doctors/signup
+Content-Type: application/json
+
+{
+    "email": "test2@test.com",
+    "password": "123test",
+    "name": "Yusuf Mert",
+    "surname": "Toros",
+    "address": "xyz mh. abc sk. No:56 Osmangazi/Bursa",
+    "phoneNumber": "+905354330771",
+    "type" : "doctor",
+    "departmentId": 1
+}
+
+### Sign in as an existing patient
+POST http://localhost:3000/doctors/signin
+Content-Type: application/json
+
+{
+    "email": "test2@test.com",
+    "password": "123test",
+    "type": "doctor"
+}
+
+### Get the currently signed in patient
+GET http://localhost:3000/doctors/currentUser

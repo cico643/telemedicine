@@ -16,7 +16,7 @@ export class Doctor extends User {
   id: number;
 
   @Column({ unique: true })
-  emaill: string;
+  email: string;
 
   @ManyToOne(() => Department, (department) => department.doctors)
   department: Department;

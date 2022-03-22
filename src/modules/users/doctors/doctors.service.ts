@@ -58,8 +58,8 @@ export class DoctorsService {
     return doctor;
   }
 
-  async getByEmail(emaill: string) {
-    const user = this.doctorsRepository.findOne({ emaill });
+  async getByEmail(email: string) {
+    const user = this.doctorsRepository.findOne({ email });
     if (user) {
       return user;
     }

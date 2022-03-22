@@ -29,7 +29,7 @@ export class DoctorsController {
     const doctor = await this.doctorsService.register(body);
     session.context = {
       userId: doctor.id,
-      email: doctor.emaill,
+      email: doctor.email,
       type: doctor.type,
     };
     return doctor;
@@ -41,7 +41,7 @@ export class DoctorsController {
     const doctor = await this.doctorsService.signin(body.email, body.password);
     session.context = {
       userId: doctor.id,
-      email: doctor.emaill,
+      email: doctor.email,
       type: doctor.type,
     };
     return doctor;
