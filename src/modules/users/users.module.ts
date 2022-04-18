@@ -10,7 +10,7 @@ import { PatientDiagnose } from './entities/patientDiagnose.entity';
 import { PatientMedication } from './entities/patientMedication.entity';
 import { PatientRelative } from './entities/patientRelative.entity';
 import { Relative } from './entities/relative.entity';
-import { CurrentUserMiddleware } from './middlewares/current-user.middleware';
+import { CurrentUserMiddleware } from '../../common/middlewares/current-user.middleware';
 import { PatientsController } from './patients/patients.controller';
 import { PatientsService } from './patients/patients.service';
 

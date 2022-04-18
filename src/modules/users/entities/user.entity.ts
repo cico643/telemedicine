@@ -22,6 +22,10 @@ export abstract class User {
   @Column()
   phoneNumber: string;
 
-  @Column()
+  @Column({
+    type: 'enum',
+    enum: UserRole,
+    default: UserRole.Patient
+  })
   type: UserRole;
 }

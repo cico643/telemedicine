@@ -1,7 +1,7 @@
 import { Body, Controller, Get, HttpCode, Post, Session } from '@nestjs/common';
-import { Serialize } from 'src/interceptors/serialize.interceptor';
-import { CurrentUser } from '../decorators/current-user.decorator';
-import { Roles } from '../decorators/roles.decorator';
+import { Serialize } from 'src/common/interceptors/serialize.interceptor';
+import { CurrentUser } from '../../../common/decorators/current-user.decorator';
+import { Roles } from '../../../common/decorators/roles.decorator';
 import { CreateDoctorDto } from '../dtos/create-doctor.dto';
 import { SignInUserDto } from '../dtos/sign-in-user.dto';
 import { Doctor } from '../entities/doctor.entity';
@@ -22,6 +22,7 @@ export class DoctorsController {
   @Post('/signout')
   async signout(@Session() session: any) {
     session.context = null;
+    session.destroy(null);
   }
 
   @Post('/signup')
