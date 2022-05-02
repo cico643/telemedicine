@@ -1,6 +1,6 @@
-import { Document } from 'src/modules/documents/document.entity';
-import { Doctor } from 'src/modules/users/entities/doctor.entity';
-import { Patient } from 'src/modules/users/entities/patient.entity';
+import { Document } from '../../documents/document.entity';
+import { Doctor } from '../../users/entities/doctor.entity';
+import { Patient } from '../../users/entities/patient.entity';
 import {
   Column,
   Entity,

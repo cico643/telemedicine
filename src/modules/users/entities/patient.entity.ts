@@ -1,5 +1,5 @@
-import { Appointment } from 'src/modules/appointments/entities/appointment.entity';
-import { Document } from 'src/modules/documents/document.entity';
+import { Appointment } from '../../appointments/entities/appointment.entity';
+import { Document } from '../../documents/document.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { PatientDiagnose } from './patientDiagnose.entity';
 import { PatientMedication } from './patientMedication.entity';

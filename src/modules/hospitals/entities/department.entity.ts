@@ -1,5 +1,5 @@
-import { Hospital } from 'src/modules/hospitals/entities/hospital.entity';
-import { Doctor } from 'src/modules/users/entities/doctor.entity';
+import { Hospital } from '../../hospitals/entities/hospital.entity';
+import { Doctor } from '../../users/entities/doctor.entity';
 import {
   Column,
   Entity,
