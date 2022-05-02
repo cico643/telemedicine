@@ -1,5 +1,10 @@
 import * as Joi from '@hapi/joi';
-import { Module, ValidationPipe } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  ValidationPipe,
+} from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD, APP_PIPE } from '@nestjs/core';
 import { AppController } from './app.controller';
@@ -10,6 +15,7 @@ import { HospitalsModule } from './modules/hospitals/hospitals.module';
 import { AppointmentsModule } from './modules/appointments/appointments.module';
 import { DocumentsModule } from './modules/documents/documents.module';
 import { RolesGuard } from './common/guards/role.guard';
+import LoggerMiddleware from './common/middlewares/logger.middleware';
 
 @Module({
   imports: [
@@ -44,6 +50,8 @@ import { RolesGuard } from './common/guards/role.guard';
     },
   ],
 })
-export class AppModule {
-  constructor() {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer): void {
+    consumer.apply(LoggerMiddleware).forRoutes('*');
+  }
 }
