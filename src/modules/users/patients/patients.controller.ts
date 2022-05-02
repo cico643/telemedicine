@@ -1,4 +1,5 @@
 import { Body, Controller, Get, HttpCode, Post, Session } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { Serialize } from 'src/common/interceptors/serialize.interceptor';
 import { CurrentUser } from '../../../common/decorators/current-user.decorator';
 import { Roles } from '../../../common/decorators/roles.decorator';
@@ -9,6 +10,7 @@ import { UserRole } from '../entities/user.entity';
 import { PatientsService } from './patients.service';
 
 @Serialize(CreatePatientDto)
+@ApiTags('patients')
 @Controller('patients')
 export class PatientsController {
   constructor(private patientsService: PatientsService) {}
