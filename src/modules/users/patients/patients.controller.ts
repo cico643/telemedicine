@@ -1,6 +1,7 @@
 import { Body, Controller, Get, HttpCode, Post, Session } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { Serialize } from 'src/common/interceptors/serialize.interceptor';
+import { Serialize } from '../../../common/interceptors/serialize.interceptor';
+import { genericErrorHandler } from '../../../lib/genericErrorHandler';
 import { CurrentUser } from '../../../common/decorators/current-user.decorator';
 import { Roles } from '../../../common/decorators/roles.decorator';
 import { CreatePatientDto } from '../dtos/create-patient.dto';
@@ -29,27 +30,35 @@ export class PatientsController {
 
   @Post('/signup')
   async createPatient(@Body() body: CreatePatientDto, @Session() session: any) {
-    const patient = await this.patientsService.register(body);
-    session.context = {
-      userId: patient.id,
-      email: patient.email,
-      type: patient.type,
-    };
-    return patient;
+    try {
+      const patient = await this.patientsService.register(body);
+      session.context = {
+        userId: patient.id,
+        email: patient.email,
+        type: patient.type,
+      };
+      return patient;
+    } catch (err) {
+      return genericErrorHandler(err);
+    }
   }
 
   @Post('/signin')
   @HttpCode(200)
   async signin(@Body() body: SignInUserDto, @Session() session: any) {
-    const patient = await this.patientsService.signin(
-      body.email,
-      body.password,
-    );
-    session.context = {
-      userId: patient.id,
-      email: patient.email,
-      type: patient.type,
-    };
-    return patient;
+    try {
+      const patient = await this.patientsService.signin(
+        body.email,
+        body.password,
+      );
+      session.context = {
+        userId: patient.id,
+        email: patient.email,
+        type: patient.type,
+      };
+      return patient;
+    } catch (err) {
+      return genericErrorHandler(err);
+    }
   }
 }
