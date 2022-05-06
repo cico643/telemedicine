@@ -1,5 +1,6 @@
 import * as Joi from '@hapi/joi';
 import {
+  Logger,
   MiddlewareConsumer,
   Module,
   NestModule,
@@ -7,8 +8,6 @@ import {
 } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD, APP_PIPE } from '@nestjs/core';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { DatabaseModule } from './providers/database/database.module';
 import { UsersModule } from './modules/users/users.module';
 import { HospitalsModule } from './modules/hospitals/hospitals.module';
@@ -35,9 +34,7 @@ import LoggerMiddleware from './common/middlewares/logger.middleware';
     AppointmentsModule,
     DocumentsModule,
   ],
-  controllers: [AppController],
   providers: [
-    AppService,
     {
       provide: APP_PIPE,
       useValue: new ValidationPipe({
@@ -48,6 +45,7 @@ import LoggerMiddleware from './common/middlewares/logger.middleware';
       provide: APP_GUARD,
       useClass: RolesGuard,
     },
+    Logger,
   ],
 })
 export class AppModule implements NestModule {

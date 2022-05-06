@@ -1,12 +1,15 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as session from 'express-session';
-import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { COOKIE_SECRET, PORT } from './config';
+import logger from './lib/logger';
 const cors = require('cors');
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger,
+  });
 
   // Swagger
   const config = new DocumentBuilder()
@@ -17,14 +20,13 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  const configService = app.get(ConfigService);
   app.use(cors());
   app.use(
     session({
-      secret: configService.get('COOKIE_SECRET'),
+      secret: COOKIE_SECRET,
     }),
   );
-  await app.listen(3000);
+  await app.listen(PORT);
   console.log(`Application is running on: ${await app.getUrl()}`);
 }
 bootstrap().catch(console.error);
