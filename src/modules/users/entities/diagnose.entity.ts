@@ -12,6 +12,7 @@ export class Diagnose {
   @OneToMany(
     () => PatientDiagnose,
     (patientDiagnose) => patientDiagnose.diagnose,
+    { eager: true },
   )
   patientDiagnoses: PatientDiagnose[];
 }

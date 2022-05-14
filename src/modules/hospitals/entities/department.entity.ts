@@ -16,7 +16,9 @@ export class Department {
   @Column()
   name: string;
 
-  @OneToMany(() => Doctor, (doctor) => doctor.department)
+  @OneToMany(() => Doctor, (doctor) => doctor.department, {
+    eager: true,
+  })
   doctors: Doctor[];
 
   @ManyToOne(() => Hospital, (hospital) => hospital.departments)

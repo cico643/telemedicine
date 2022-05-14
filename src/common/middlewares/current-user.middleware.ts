@@ -5,9 +5,9 @@ import { PatientsService } from '../../modules/users/patients/patients.service';
 export class CurrentUserMiddleware implements NestMiddleware {
   constructor(private patientsService: PatientsService) {}
   async use(req, res, next) {
-    const userId = req.session?.context?.userId;
-    if (userId) {
-      const user = await this.patientsService.findById(userId);
+    const id = req.session?.context?.id;
+    if (id) {
+      const user = await this.patientsService.findById(id);
       req.currentUser = user;
     }
 

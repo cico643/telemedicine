@@ -4,6 +4,7 @@ import { Patient } from '../../users/entities/patient.entity';
 import {
   Column,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   OneToOne,
@@ -34,9 +35,16 @@ export class Appointment {
   @ManyToOne(() => Patient, (patient) => patient.appointments)
   patient: Patient;
 
-  @OneToOne(() => Prescription, (prescription) => prescription.appointment)
+  @JoinColumn()
+  @OneToOne(() => Prescription, (prescription) => prescription.appointment, {
+    eager: true,
+    cascade: true,
+  })
   prescription: Prescription;
 
-  @OneToMany(() => Document, (document) => document.appointment)
+  @OneToMany(() => Document, (document) => document.appointment, {
+    eager: true,
+    cascade: true,
+  })
   documents: Document[];
 }

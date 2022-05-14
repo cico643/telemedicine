@@ -18,16 +18,22 @@ export class Doctor extends User {
   @Column({ unique: true })
   email: string;
 
-  @ManyToOne(() => Department, (department) => department.doctors)
-  department: Department;
+  @ManyToOne(() => Department, (department) => department.doctors, {
+    nullable: true,
+  })
+  department?: Department;
 
-  @OneToMany(() => Appointment, (appointment) => appointment.doctor)
-  appointments: Appointment[];
+  @OneToMany(() => Appointment, (appointment) => appointment.doctor, {
+    eager: true,
+    cascade: true,
+    nullable: true,
+  })
+  appointments?: Appointment[];
 
   @OneToMany(
     () => PatientDiagnose,
     (patientDiagnose) => patientDiagnose.doctor,
-    { nullable: true },
+    { nullable: true, eager: true },
   )
   patientDiagnoses?: PatientDiagnose[];
 }

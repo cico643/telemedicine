@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module } from '@nestjs/common';
+import { Logger, MiddlewareConsumer, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DoctorsController } from './doctors/doctors.controller';
 import { DoctorsService } from './doctors/doctors.service';
@@ -13,6 +13,8 @@ import { Relative } from './entities/relative.entity';
 import { CurrentUserMiddleware } from '../../common/middlewares/current-user.middleware';
 import { PatientsController } from './patients/patients.controller';
 import { PatientsService } from './patients/patients.service';
+import PublicFile from 'src/providers/s3/publicFile.entity';
+import { FilesModule } from 'src/providers/s3/files.module';
 
 @Module({
   imports: [
@@ -25,10 +27,12 @@ import { PatientsService } from './patients/patients.service';
       PatientRelative,
       Relative,
       Doctor,
+      PublicFile,
     ]),
+    FilesModule,
   ],
   controllers: [PatientsController, DoctorsController],
-  providers: [PatientsService, DoctorsService],
+  providers: [PatientsService, DoctorsService, Logger],
 })
 export class UsersModule {
   constructor() {}

@@ -9,11 +9,13 @@ import { Repository } from 'typeorm';
 import { CreatePatientDto } from '../dtos/create-patient.dto';
 import { Patient } from '../entities/patient.entity';
 import * as bcrypt from 'bcrypt';
+import { FilesService } from 'src/providers/s3/files.service';
 
 @Injectable()
 export class PatientsService {
   constructor(
     @InjectRepository(Patient) private patientsRepository: Repository<Patient>,
+    private readonly filesService: FilesService,
   ) {}
 
   public async register(patientDto: CreatePatientDto) {
@@ -71,5 +73,30 @@ export class PatientsService {
     const patient = await this.patientsRepository.create(patientData);
     await this.patientsRepository.save(patient);
     return patient;
+  }
+
+  public async addAvatar(id: number, imageBuffer: Buffer, filename: string) {
+    const avatar = await this.filesService.uploadPublicFile(
+      imageBuffer,
+      filename,
+    );
+    const user = await this.findById(id);
+    await this.patientsRepository.update(id, {
+      ...user,
+      avatar,
+    });
+    return avatar;
+  }
+
+  public async deleteAvatar(id: number) {
+    const user = await this.findById(id);
+    const fileId = user.avatar?.id;
+    if (fileId) {
+      await this.patientsRepository.update(id, {
+        ...user,
+        avatar: null,
+      });
+      await this.filesService.deletePublicFile(fileId);
+    }
   }
 }

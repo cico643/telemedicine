@@ -14,27 +14,38 @@ export class Patient extends User {
   @Column({ unique: true })
   email: string;
 
-  @OneToMany(() => Appointment, (appointment) => appointment.patient)
-  appointments: Appointment[];
+  @OneToMany(() => Appointment, (appointment) => appointment.patient, {
+    eager: true,
+    cascade: true,
+    nullable: true,
+  })
+  appointments?: Appointment[];
 
-  @OneToMany(() => Document, (document) => document.patient)
-  documents: Document[];
+  @OneToMany(() => Document, (document) => document.patient, {
+    eager: true,
+    cascade: true,
+    nullable: true,
+  })
+  documents?: Document[];
 
   @OneToMany(
     () => PatientDiagnose,
     (patientDiagnose) => patientDiagnose.patient,
+    { eager: true, cascade: true, nullable: true },
   )
-  patientDiagnoses: PatientDiagnose[];
+  patientDiagnoses?: PatientDiagnose[];
 
   @OneToMany(
     () => PatientMedication,
     (patientMedication) => patientMedication.patient,
+    { eager: true, cascade: true, nullable: true },
   )
-  patientMedications: PatientMedication[];
+  patientMedications?: PatientMedication[];
 
   @OneToMany(
     () => PatientRelative,
     (patientRelative) => patientRelative.patient,
+    { eager: true, cascade: true, nullable: true },
   )
-  patientRelatives: PatientRelative[];
+  patientRelatives?: PatientRelative[];
 }

@@ -1,4 +1,3 @@
-import * as Joi from '@hapi/joi';
 import {
   Logger,
   MiddlewareConsumer,
@@ -6,7 +5,6 @@ import {
   NestModule,
   ValidationPipe,
 } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD, APP_PIPE } from '@nestjs/core';
 import { DatabaseModule } from './providers/database/database.module';
 import { UsersModule } from './modules/users/users.module';
@@ -15,24 +13,18 @@ import { AppointmentsModule } from './modules/appointments/appointments.module';
 import { DocumentsModule } from './modules/documents/documents.module';
 import { RolesGuard } from './common/guards/role.guard';
 import LoggerMiddleware from './common/middlewares/logger.middleware';
+import { FilesModule } from './providers/s3/files.module';
+import { RedisModule } from './providers/redis/redis.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      validationSchema: Joi.object({
-        POSTGRES_HOST: Joi.string().required(),
-        POSTGRES_PORT: Joi.number().required(),
-        POSTGRES_USER: Joi.string().required(),
-        POSTGRES_PASSWORD: Joi.string().required(),
-        POSTGRES_DB: Joi.string().required(),
-        PORT: Joi.number(),
-      }),
-    }),
     DatabaseModule,
     UsersModule,
     HospitalsModule,
     AppointmentsModule,
     DocumentsModule,
+    FilesModule,
+    RedisModule,
   ],
   providers: [
     {

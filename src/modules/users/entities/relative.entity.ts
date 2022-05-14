@@ -18,6 +18,7 @@ export class Relative {
   @OneToMany(
     () => PatientRelative,
     (patientRelative) => patientRelative.relative,
+    { eager: true },
   )
   patientRelatives: PatientRelative[];
 }

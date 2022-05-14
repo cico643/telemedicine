@@ -4,6 +4,7 @@ import {
   IsEmail,
   IsEnum,
   IsNotEmpty,
+  IsOptional,
   IsString,
   Matches,
   MinLength,
@@ -35,7 +36,9 @@ export class CreatePatientDto {
   @MinLength(7)
   password: string;
 
+  @ApiProperty({ required: true })
   @IsString()
+  @IsNotEmpty()
   @Expose()
   address: string;
 

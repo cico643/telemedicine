@@ -1,4 +1,5 @@
-import { Column } from 'typeorm';
+import PublicFile from 'src/providers/s3/publicFile.entity';
+import { Column, JoinColumn, OneToOne } from 'typeorm';
 
 export enum UserRole {
   Doctor = 'doctor',
@@ -22,10 +23,17 @@ export abstract class User {
   @Column()
   phoneNumber: string;
 
+  @JoinColumn()
+  @OneToOne(() => PublicFile, {
+    eager: true,
+    nullable: true,
+  })
+  avatar?: PublicFile;
+
   @Column({
     type: 'enum',
     enum: UserRole,
-    default: UserRole.Patient
+    default: UserRole.Patient,
   })
   type: UserRole;
 }

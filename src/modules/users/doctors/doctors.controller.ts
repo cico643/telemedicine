@@ -9,6 +9,7 @@ import { SignInUserDto } from '../dtos/sign-in-user.dto';
 import { Doctor } from '../entities/doctor.entity';
 import { UserRole } from '../entities/user.entity';
 import { DoctorsService } from './doctors.service';
+import { Session as SessionType } from 'express-session';
 
 @Serialize(CreateDoctorDto)
 @ApiTags('doctors')
@@ -29,11 +30,14 @@ export class DoctorsController {
   }
 
   @Post('/signup')
-  async createPatient(@Body() body: CreateDoctorDto, @Session() session: any) {
+  async createPatient(
+    @Body() body: CreateDoctorDto,
+    @Session() session: SessionType,
+  ) {
     try {
       const doctor = await this.doctorsService.register(body);
       session.context = {
-        userId: doctor.id,
+        id: doctor.id,
         email: doctor.email,
         type: doctor.type,
       };
@@ -45,14 +49,14 @@ export class DoctorsController {
 
   @Post('/signin')
   @HttpCode(200)
-  async signin(@Body() body: SignInUserDto, @Session() session: any) {
+  async signin(@Body() body: SignInUserDto, @Session() session: SessionType) {
     try {
       const doctor = await this.doctorsService.signin(
         body.email,
         body.password,
       );
       session.context = {
-        userId: doctor.id,
+        id: doctor.id,
         email: doctor.email,
         type: doctor.type,
       };

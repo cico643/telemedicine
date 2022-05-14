@@ -5,7 +5,9 @@ import {
   IsEnum,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsString,
+  Matches,
   MinLength,
 } from 'class-validator';
 import { UserRole } from '../entities/user.entity';
@@ -36,9 +38,25 @@ export class CreateDoctorDto {
   password: string;
 
   @ApiProperty({ required: true })
-  @IsNumber()
+  @IsString()
   @IsNotEmpty()
-  departmentId: number;
+  @Expose()
+  address: string;
+
+  @ApiProperty({
+    description: 'Has to match a regular expression: /^\\+[1-9]\\d{1,14}$/',
+    example: '+905555005050',
+  })
+  @IsString()
+  @IsNotEmpty()
+  @Matches(/^\+[1-9]\d{1,14}$/)
+  @Expose()
+  phoneNumber: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsNumber()
+  departmentId?: number;
 
   @ApiProperty({ enum: UserRole, required: true })
   @IsEnum(UserRole)
