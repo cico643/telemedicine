@@ -1,0 +1,31 @@
+### Create a new user
+POST http://localhost:5000/auth/signup
+Content-Type: application/json
+
+{
+    "email": "test1@test.com",
+    "password": "123test",
+    "name": "Cihat",
+    "surname": "Yeşildağ",
+    "address": "xyz mh. abc sk. No:56 Osmangazi/Bursa",
+    "phoneNumber": "+905354330771",
+    "type" : "patient"
+}
+
+### Sign in as an existing user
+POST http://localhost:5000/auth/signin
+Content-Type: application/json
+
+{
+    "email": "test1@test.com",
+    "password": "123test",
+    "type": "patient"
+}
+
+### Sign out
+POST http://localhost:5000/auth/signout
+Content-Type: application/json
+
+{
+
+}

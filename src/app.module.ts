@@ -15,11 +15,13 @@ import { RolesGuard } from './common/guards/role.guard';
 import LoggerMiddleware from './common/middlewares/logger.middleware';
 import { FilesModule } from './providers/s3/files.module';
 import { RedisModule } from './providers/redis/redis.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
     DatabaseModule,
     UsersModule,
+    AuthModule,
     HospitalsModule,
     AppointmentsModule,
     DocumentsModule,
