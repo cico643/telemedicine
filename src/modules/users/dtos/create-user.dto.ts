@@ -4,7 +4,6 @@ import {
   IsEmail,
   IsEnum,
   IsNotEmpty,
-  IsNumber,
   IsOptional,
   IsString,
   Matches,
@@ -12,7 +11,7 @@ import {
 } from 'class-validator';
 import { UserRole } from '../entities/user.entity';
 
-export class CreateDoctorDto {
+export class CreateUserDto {
   @ApiProperty({ required: true })
   @IsString()
   @IsNotEmpty()
@@ -52,11 +51,6 @@ export class CreateDoctorDto {
   @Matches(/^\+[1-9]\d{1,14}$/)
   @Expose()
   phoneNumber: string;
-
-  @ApiProperty({ required: false })
-  @IsOptional()
-  @IsNumber()
-  departmentId?: number;
 
   @ApiProperty({ enum: UserRole, required: true })
   @IsEnum(UserRole)

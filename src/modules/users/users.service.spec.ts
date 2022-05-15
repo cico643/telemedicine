@@ -1,8 +1,8 @@
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Doctor } from '../entities/doctor.entity';
-import { DoctorsService } from './doctors.service';
+import { Doctor } from './entities/doctor.entity';
+import { UsersService } from './users.service';
 
 const mockedConfigService = {
   get(key: string) {
@@ -13,12 +13,12 @@ const mockedConfigService = {
   },
 };
 
-describe('The DoctorsService', () => {
-  let doctorsService: DoctorsService;
+describe('The UsersService', () => {
+  let usersService: UsersService;
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       providers: [
-        DoctorsService,
+        UsersService,
         {
           provide: ConfigService,
           useValue: mockedConfigService,
@@ -29,9 +29,9 @@ describe('The DoctorsService', () => {
         },
       ],
     }).compile();
-    doctorsService = module.get<DoctorsService>(DoctorsService);
+    usersService = module.get<UsersService>(UsersService);
   });
   it('can create a new doctors service instance', async () => {
-    expect(doctorsService).toBeDefined();
+    expect(usersService).toBeDefined();
   });
 });

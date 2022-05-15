@@ -7,8 +7,9 @@ import {
   COOKIE_NAME,
   COOKIE_EXPIRATION,
 } from 'src/config/constants';
-const session = require('express-session');
-const RedisStore = require('connect-redis')(session);
+import session from 'express-session';
+
+const RedisStore = connectRedis(session);
 
 const isProd = NODE_ENV === 'production';
 

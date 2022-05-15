@@ -11,33 +11,26 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { Serialize } from '../../../common/interceptors/serialize.interceptor';
-import { genericErrorHandler } from '../../../lib/genericErrorHandler';
-import { CurrentUser } from '../../../common/decorators/current-user.decorator';
-import { Roles } from '../../../common/decorators/roles.decorator';
-import { CreatePatientDto } from '../dtos/create-patient.dto';
-import { SignInUserDto } from '../dtos/sign-in-user.dto';
-import { Patient } from '../entities/patient.entity';
-import { UserRole } from '../entities/user.entity';
-import { PatientsService } from './patients.service';
+import { Serialize } from '../../common/interceptors/serialize.interceptor';
+import { genericErrorHandler } from './../../lib/genericErrorHandler';
+import { Roles } from './../../common/decorators/roles.decorator';
+import { CreateUserDto } from './dtos/create-user.dto';
+import { SignInUserDto } from './dtos/sign-in-user.dto';
+import { Patient } from './entities/patient.entity';
+import { UserRole } from './entities/user.entity';
+import { UsersService } from './users.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { multerOptions } from '../../../lib/multerOptions';
+import { multerOptions } from './../../lib/multerOptions';
 import { Session as SessionType } from 'express-session';
 
-@Serialize(CreatePatientDto)
-@ApiTags('patients')
-@Controller('patients')
-export class PatientsController {
+@Serialize(CreateUserDto)
+@ApiTags('users')
+@Controller('users')
+export class UsersController {
   constructor(
-    private patientsService: PatientsService,
+    private usersService: UsersService,
     private readonly logger: Logger,
   ) {}
-
-  @Get('/currentUser')
-  @Roles(UserRole.Patient)
-  async getCurrentUser(@CurrentUser() patient: Patient) {
-    return patient;
-  }
 
   @Post('/signout')
   async signout(@Session() session: SessionType) {
@@ -46,18 +39,18 @@ export class PatientsController {
   }
 
   @Post('/signup')
-  async createPatient(
-    @Body() body: CreatePatientDto,
+  async createUser(
+    @Body() body: CreateUserDto,
     @Session() session: SessionType,
   ) {
     try {
-      const patient = await this.patientsService.register(body);
+      const user = await this.usersService.register(body);
       session.context = {
-        id: patient.id,
-        email: patient.email,
-        type: patient.type,
+        id: user.id,
+        email: user.email,
+        type: user.type,
       };
-      return patient;
+      return user;
     } catch (err) {
       return genericErrorHandler(err);
     }
@@ -67,16 +60,13 @@ export class PatientsController {
   @HttpCode(200)
   async signin(@Body() body: SignInUserDto, @Session() session: SessionType) {
     try {
-      const patient = await this.patientsService.signin(
-        body.email,
-        body.password,
-      );
+      const user = await this.usersService.signin(body);
       session.context = {
-        id: patient.id,
-        email: patient.email,
-        type: patient.type,
+        id: user.id,
+        email: user.email,
+        type: user.type,
       };
-      return patient;
+      return user;
     } catch (err) {
       return genericErrorHandler(err);
     }
@@ -87,14 +77,15 @@ export class PatientsController {
   @UseInterceptors(FileInterceptor('file', multerOptions))
   @HttpCode(201)
   async addAvatar(@Session() session: SessionType, @UploadedFile() file) {
-    const avatar = await this.patientsService.addAvatar(
+    const avatar = await this.usersService.addAvatar(
       session.context.id,
+      session.context.type,
       file.buffer,
       file.originalname,
     );
     this.logger.log(
       `Avatar added [userId: ${session.context.id}]`,
-      PatientsController.name,
+      UsersController.name,
     );
     return avatar;
   }
@@ -104,10 +95,13 @@ export class PatientsController {
   @HttpCode(204)
   async deleteAvatar(@Session() session: SessionType) {
     try {
-      await this.patientsService.deleteAvatar(session.context.id);
+      await this.usersService.deleteAvatar(
+        session.context.id,
+        session.context.type,
+      );
       this.logger.log(
         `Avatar deleted [userId: ${session.context.id}]`,
-        PatientsController.name,
+        UsersController.name,
       );
     } catch (err) {
       return genericErrorHandler(err);

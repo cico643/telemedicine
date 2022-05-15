@@ -1,5 +1,5 @@
-### Create a new patient
-POST http://localhost:3000/patients/signup
+### Create a new user
+POST http://localhost:5000/users/signup
 Content-Type: application/json
 
 {
@@ -12,8 +12,8 @@ Content-Type: application/json
     "type" : "patient"
 }
 
-### Sign in as an existing patient
-POST http://localhost:3000/patients/signin
+### Sign in as an existing user
+POST http://localhost:5000/users/signin
 Content-Type: application/json
 
 {
@@ -21,35 +21,3 @@ Content-Type: application/json
     "password": "123test",
     "type": "patient"
 }
-
-### Get the currently signed in patient
-GET http://localhost:3000/patients/currentUser
-
-
-### Create a new doctor
-POST http://localhost:3000/doctors/signup
-Content-Type: application/json
-
-{
-    "email": "test2@test.com",
-    "password": "123test",
-    "name": "Yusuf Mert",
-    "surname": "Toros",
-    "address": "xyz mh. abc sk. No:56 Osmangazi/Bursa",
-    "phoneNumber": "+905354330771",
-    "type" : "doctor",
-    "departmentId": 1
-}
-
-### Sign in as an existing patient
-POST http://localhost:3000/doctors/signin
-Content-Type: application/json
-
-{
-    "email": "test2@test.com",
-    "password": "123test",
-    "type": "doctor"
-}
-
-### Get the currently signed in patient
-GET http://localhost:3000/doctors/currentUser
