@@ -16,8 +16,10 @@ import { Admin } from '../entities/admin.entity';
 import PostgresErrorCode from 'src/providers/database/postgresErrorCodes.enum';
 import { CreatePatientDiagnoseDto } from '../dtos/create-patient-diagnose.dto';
 import { PatientDiagnose } from '../entities/patientDiagnose.entity';
-import { Diagnose } from '../entities/diagnose.entity';
 import { DiagnosesService } from './diagnoses.service';
+import { CreatePatientMedicationDto } from '../dtos/create-patient-medication.dto';
+import { MedicationsService } from './medications.service';
+import { PatientMedication } from '../entities/patientMedication.entity';
 
 @Injectable()
 export class UsersService {
@@ -27,9 +29,10 @@ export class UsersService {
     @InjectRepository(Admin) private adminsRepository: Repository<Admin>,
     @InjectRepository(PatientDiagnose)
     private patientDiagnoseRepository: Repository<PatientDiagnose>,
-    @InjectRepository(Diagnose)
-    private diagnoseRepository: Repository<Diagnose>,
+    @InjectRepository(PatientMedication)
+    private patientMedicationRepository: Repository<PatientMedication>,
     private readonly diagnosesService: DiagnosesService,
+    private readonly medicationsService: MedicationsService,
     private readonly filesService: FilesService,
   ) {}
 
@@ -216,5 +219,37 @@ export class UsersService {
     patientDiagnose.approved = false;
     patientDiagnose.doctor = null;
     await this.patientDiagnoseRepository.save(patientDiagnose);
+  }
+
+  public async addPatientMedication(
+    patientMedicationDto: CreatePatientMedicationDto,
+    id: number,
+  ) {
+    const medication = await this.medicationsService.getMedicationById(
+      patientMedicationDto.medicationId,
+    );
+    const patient = await this.findById(id, this.patientsRepository);
+    const patientMedication = await this.patientMedicationRepository.create({
+      patient,
+      medication,
+    });
+    await this.patientMedicationRepository.save(patientMedication);
+    return patientMedication;
+  }
+
+  public async getPatientMedications(id: number) {
+    const patientMedications = await this.patientMedicationRepository.find({
+      where: { patient: id },
+      relations: ['patient'],
+    });
+
+    return patientMedications;
+  }
+
+  public async getPatientMedicationForGivenId(medicationId) {
+    const patientMedication = await this.patientMedicationRepository.findOne(
+      medicationId,
+    );
+    return patientMedication;
   }
 }

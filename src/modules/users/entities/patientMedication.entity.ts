@@ -1,10 +1,4 @@
-import {
-  Column,
-  Entity,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Medication } from './medication.entity';
 import { Patient } from './patient.entity';
 
@@ -13,11 +7,14 @@ export class PatientMedication {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Patient, (patient) => patient.patientMedications)
+  @ManyToOne(() => Patient, (patient) => patient.patientMedications, {
+    cascade: true,
+  })
   patient: Patient;
 
   @ManyToOne(() => Medication, (medication) => medication.patientMedications, {
     eager: true,
+    cascade: ['insert'],
   })
   medication: Medication;
 }

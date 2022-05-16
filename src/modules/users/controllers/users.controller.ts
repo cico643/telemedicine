@@ -24,6 +24,7 @@ import { AuthGuard } from 'src/common/guards/auth.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { UserRole } from '../entities/user.entity';
 import { CreatePatientDiagnoseDto } from '../dtos/create-patient-diagnose.dto';
+import { CreatePatientMedicationDto } from '../dtos/create-patient-medication.dto';
 
 @UseGuards(AuthGuard)
 @ApiTags('users')
@@ -68,21 +69,21 @@ export class UsersController {
     }
   }
 
-  @Post('/:id/patient-diagnoses')
+  @Post('/:userId/patient-diagnoses')
   @HttpCode(201)
   @Roles(UserRole.Patient)
   async addPatientDiagnose(
     @Body() body: CreatePatientDiagnoseDto,
-    @Param('id', ParseIntPipe) id: number,
+    @Param('userId', ParseIntPipe) userId: number,
   ) {
     try {
       const patientDiagnose = await this.usersService.addPatientDiagnose(
         body,
-        id,
+        userId,
       );
 
       this.logger.log(
-        `Diagnose added for patient [userId: ${id}]`,
+        `Diagnose added for patient [userId: ${userId}]`,
         UsersController.name,
       );
 
@@ -114,13 +115,13 @@ export class UsersController {
     @Param('diagnoseId', ParseIntPipe) diagnoseId: number,
   ) {
     try {
-      const patientDiagnoses =
+      const patientDiagnose =
         await this.usersService.getPatientDiagnoseForGivenId(diagnoseId);
       this.logger.log(
         `Fetched diagnose ${diagnoseId} of patient [userId: ${userId}]`,
         UsersController.name,
       );
-      return patientDiagnoses;
+      return patientDiagnose;
     } catch (err) {
       return genericErrorHandler(err);
     }
@@ -162,6 +163,66 @@ export class UsersController {
         `Approval of Patient Diagnose ${diagnoseId} is removed by the doctor [userId: ${userId}]`,
         UsersController.name,
       );
+    } catch (err) {
+      return genericErrorHandler(err);
+    }
+  }
+
+  @Post('/:id/patient-medications')
+  @HttpCode(201)
+  @Roles(UserRole.Patient)
+  async addPatientMedication(
+    @Body() body: CreatePatientMedicationDto,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    try {
+      const patientMedication = await this.usersService.addPatientMedication(
+        body,
+        id,
+      );
+
+      this.logger.log(
+        `Medication added for patient [userId: ${id}]`,
+        UsersController.name,
+      );
+
+      return patientMedication;
+    } catch (err) {
+      return genericErrorHandler(err);
+    }
+  }
+
+  @Get('/:userId/patient-medications')
+  @HttpCode(200)
+  async getPatientMedications(@Param('userId', ParseIntPipe) id: number) {
+    try {
+      const patientMedications = await this.usersService.getPatientMedications(
+        id,
+      );
+      this.logger.log(
+        `Fetched all medications of patient [userId: ${id}]`,
+        UsersController.name,
+      );
+      return patientMedications;
+    } catch (err) {
+      return genericErrorHandler(err);
+    }
+  }
+
+  @Get('/:userId/patient-medications/:medicationId')
+  @HttpCode(200)
+  async getPatientMedicationForGivenId(
+    @Param('userId', ParseIntPipe) userId: number,
+    @Param('medicationId', ParseIntPipe) medicationId: number,
+  ) {
+    try {
+      const patientMedication =
+        await this.usersService.getPatientMedicationForGivenId(medicationId);
+      this.logger.log(
+        `Fetched medication ${medicationId} of patient [userId: ${userId}]`,
+        UsersController.name,
+      );
+      return patientMedication;
     } catch (err) {
       return genericErrorHandler(err);
     }
