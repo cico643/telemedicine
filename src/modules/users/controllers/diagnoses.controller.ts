@@ -55,7 +55,9 @@ export class DiagnosesController {
   @Get()
   @HttpCode(200)
   async getDiagnoses() {
-    return this.diagnosesService.getDiagnoses();
+    const diagnoses = await this.diagnosesService.getDiagnoses();
+    this.logger.log(`Fetched all diagnoses`, DiagnosesController.name);
+    return diagnoses;
   }
 
   @Get('/:id')
@@ -66,7 +68,15 @@ export class DiagnosesController {
 
   @Delete('/:id')
   @HttpCode(204)
-  async deleteDiagnose(@Param('id', ParseIntPipe) id: number) {
-    return this.diagnosesService.deleteDiagnose(id);
+  async deleteDiagnose(
+    @Param('id', ParseIntPipe) id: number,
+    @Session() session: SessionType,
+  ) {
+    const deleteResult = await this.diagnosesService.deleteDiagnose(id);
+    this.logger.log(
+      `Diagnose deleted by admin [userId: ${session.context.id}]`,
+      DiagnosesController.name,
+    );
+    return deleteResult;
   }
 }
