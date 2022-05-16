@@ -1,3 +1,7 @@
+#######  DIAGNOSES
+
+
+
 ### Add new diagnose
 POST http://localhost:5000/diagnoses
 Content-Type: application/json
@@ -41,3 +45,24 @@ DELETE http://localhost:5000/users/1/patient-diagnoses/2/approval-status
 Content-Type: application/json
 
 {}
+
+
+######## MEDICATIONS
+
+### Add new medication
+POST http://localhost:5000/medications
+Content-Type: application/json
+
+{
+    "name": "painkiller"
+}
+
+### Get all medications
+GET http://localhost:5000/medications
+
+
+### Get medication by id
+GET http://localhost:5000/medications/1
+
+### Delete medication by id
+DELETE http://localhost:5000/medications/1

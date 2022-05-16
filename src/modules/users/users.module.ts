@@ -15,6 +15,8 @@ import { UsersService } from './services/users.service';
 import { DiagnosesController } from './controllers/diagnoses.controller';
 import { DiagnosesService } from './services/diagnoses.service';
 import { Admin } from './entities/admin.entity';
+import { MedicationsController } from './controllers/medications.controller';
+import { MedicationsService } from './services/medications.service';
 
 @Module({
   imports: [
@@ -32,8 +34,8 @@ import { Admin } from './entities/admin.entity';
     ]),
     FilesModule,
   ],
-  controllers: [UsersController, DiagnosesController],
-  providers: [UsersService, DiagnosesService, Logger],
+  controllers: [UsersController, DiagnosesController, MedicationsController],
+  providers: [UsersService, DiagnosesService, MedicationsService, Logger],
   exports: [UsersService],
 })
 export class UsersModule {}

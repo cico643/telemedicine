@@ -8,4 +8,9 @@ export class Admin extends User {
 
   @Column({ unique: true })
   email: string;
+
+  toJSON() {
+    delete this.password;
+    return this;
+  }
 }

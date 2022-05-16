@@ -36,4 +36,9 @@ export class Doctor extends User {
     { nullable: true },
   )
   patientDiagnoses?: PatientDiagnose[];
+
+  toJSON() {
+    delete this.password;
+    return this;
+  }
 }

@@ -65,6 +65,7 @@ export class DiagnosesController {
   }
 
   @Delete('/:id')
+  @Roles(UserRole.Admin)
   @HttpCode(204)
   async deleteDiagnose(
     @Param('id', ParseIntPipe) id: number,

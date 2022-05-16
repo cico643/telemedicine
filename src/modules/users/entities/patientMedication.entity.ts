@@ -16,6 +16,8 @@ export class PatientMedication {
   @ManyToOne(() => Patient, (patient) => patient.patientMedications)
   patient: Patient;
 
-  @ManyToOne(() => Medication, (medication) => medication.patientMedications)
+  @ManyToOne(() => Medication, (medication) => medication.patientMedications, {
+    eager: true,
+  })
   medication: Medication;
 }

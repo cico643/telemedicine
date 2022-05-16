@@ -6,13 +6,12 @@ export class Medication {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ unique: true })
   name: string;
 
   @OneToMany(
     () => PatientMedication,
     (patientMedication) => patientMedication.medication,
-    { eager: true },
   )
   patientMedications: PatientMedication[];
 }
