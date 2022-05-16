@@ -8,16 +8,21 @@ export class PatientDiagnose {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  startDate: Date;
+  @Column({ type: 'date' })
+  startDate: string;
 
-  @Column()
+  @Column({ type: 'bool', nullable: true, default: false })
   approved: boolean;
 
-  @ManyToOne(() => Patient, (patient) => patient.patientDiagnoses)
+  @ManyToOne(() => Patient, (patient) => patient.patientDiagnoses, {
+    cascade: true,
+  })
   patient: Patient;
 
-  @ManyToOne(() => Diagnose, (diagnose) => diagnose.patientDiagnoses)
+  @ManyToOne(() => Diagnose, (diagnose) => diagnose.patientDiagnoses, {
+    eager: true,
+    cascade: ['insert'],
+  })
   diagnose: Diagnose;
 
   @ManyToOne(() => Doctor, (doctor) => doctor.patientDiagnoses, {

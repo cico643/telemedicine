@@ -31,7 +31,7 @@ export class Patient extends User {
   @OneToMany(
     () => PatientDiagnose,
     (patientDiagnose) => patientDiagnose.patient,
-    { eager: true, cascade: true, nullable: true },
+    { nullable: true },
   )
   patientDiagnoses?: PatientDiagnose[];
 
@@ -48,4 +48,9 @@ export class Patient extends User {
     { eager: true, cascade: true, nullable: true },
   )
   patientRelatives?: PatientRelative[];
+
+  toJSON() {
+    delete this.password;
+    return this;
+  }
 }

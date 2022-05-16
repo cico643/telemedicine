@@ -14,7 +14,6 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { Serialize } from '../../../common/interceptors/serialize.interceptor';
 import { genericErrorHandler } from '../../../lib/genericErrorHandler';
 import { CreateUserDto } from '../dtos/create-user.dto';
 import { DiagnosesService } from '../services/diagnoses.service';
@@ -23,7 +22,6 @@ import { UserRole } from '../entities/user.entity';
 import { CreateDiagnoseDto } from '../dtos/create-diagnose.dto';
 import { Session as SessionType } from 'express-session';
 
-@Serialize(CreateUserDto)
 @ApiTags('diagnoses')
 @Controller('diagnoses')
 export class DiagnosesController {

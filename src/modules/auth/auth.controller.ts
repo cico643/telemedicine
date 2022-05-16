@@ -7,14 +7,12 @@ import {
   Session,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { Serialize } from '../../common/interceptors/serialize.interceptor';
 import { genericErrorHandler } from '../../lib/genericErrorHandler';
 import { CreateUserDto } from '../users/dtos/create-user.dto';
 import { SignInUserDto } from '../users/dtos/sign-in-user.dto';
 import { AuthService } from './auth.service';
 import { Session as SessionType } from 'express-session';
 
-@Serialize(CreateUserDto)
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {

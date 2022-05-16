@@ -1,10 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose } from 'class-transformer';
 import {
   IsEmail,
   IsEnum,
   IsNotEmpty,
-  IsOptional,
   IsString,
   Matches,
   MinLength,
@@ -15,19 +13,16 @@ export class CreateUserDto {
   @ApiProperty({ required: true })
   @IsString()
   @IsNotEmpty()
-  @Expose()
   name: string;
 
   @ApiProperty({ required: true })
   @IsString()
   @IsNotEmpty()
-  @Expose()
   surname: string;
 
   @ApiProperty()
   @IsEmail()
   @IsNotEmpty()
-  @Expose()
   email: string;
 
   @ApiProperty({ minLength: 7 })
@@ -39,7 +34,6 @@ export class CreateUserDto {
   @ApiProperty({ required: true })
   @IsString()
   @IsNotEmpty()
-  @Expose()
   address: string;
 
   @ApiProperty({
@@ -49,11 +43,9 @@ export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
   @Matches(/^\+[1-9]\d{1,14}$/)
-  @Expose()
   phoneNumber: string;
 
   @ApiProperty({ enum: UserRole, required: true })
   @IsEnum(UserRole)
-  @Expose()
   type: UserRole;
 }

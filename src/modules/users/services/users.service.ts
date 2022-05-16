@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   HttpException,
   HttpStatus,
   Injectable,
@@ -13,6 +14,10 @@ import { FilesService } from '../../../providers/s3/files.service';
 import { Doctor } from '../entities/doctor.entity';
 import { Admin } from '../entities/admin.entity';
 import PostgresErrorCode from 'src/providers/database/postgresErrorCodes.enum';
+import { CreatePatientDiagnoseDto } from '../dtos/create-patient-diagnose.dto';
+import { PatientDiagnose } from '../entities/patientDiagnose.entity';
+import { Diagnose } from '../entities/diagnose.entity';
+import { DiagnosesService } from './diagnoses.service';
 
 @Injectable()
 export class UsersService {
@@ -20,6 +25,11 @@ export class UsersService {
     @InjectRepository(Patient) private patientsRepository: Repository<Patient>,
     @InjectRepository(Doctor) private doctorsRepository: Repository<Patient>,
     @InjectRepository(Admin) private adminsRepository: Repository<Admin>,
+    @InjectRepository(PatientDiagnose)
+    private patientDiagnoseRepository: Repository<PatientDiagnose>,
+    @InjectRepository(Diagnose)
+    private diagnoseRepository: Repository<Diagnose>,
+    private readonly diagnosesService: DiagnosesService,
     private readonly filesService: FilesService,
   ) {}
 
@@ -144,5 +154,67 @@ export class UsersService {
       });
       await this.filesService.deletePublicFile(fileId);
     }
+  }
+
+  public async addPatientDiagnose(
+    patientDiagnoseDto: CreatePatientDiagnoseDto,
+    id: number,
+  ) {
+    const diagnose = await this.diagnosesService.getDiagnoseById(
+      patientDiagnoseDto.diagnoseId,
+    );
+    const patient = await this.findById(id, this.patientsRepository);
+    const patientDiagnose = await this.patientDiagnoseRepository.create({
+      startDate: patientDiagnoseDto.startDate,
+      patient,
+      diagnose,
+    });
+    await this.patientDiagnoseRepository.save(patientDiagnose);
+    return patientDiagnose;
+  }
+
+  public async getPatientDiagnoses(id: number) {
+    const patientDiagnoses = await this.patientDiagnoseRepository.find({
+      where: { patient: id },
+      relations: ['patient'],
+    });
+
+    return patientDiagnoses;
+  }
+
+  public async getPatientDiagnoseForGivenId(diagnoseId) {
+    const patientDiagnose = await this.patientDiagnoseRepository.findOne(
+      diagnoseId,
+    );
+    return patientDiagnose;
+  }
+
+  public async approvePatientDiagnose(userId, diagnoseId) {
+    const patientDiagnose = await this.getPatientDiagnoseForGivenId(diagnoseId);
+    if (!patientDiagnose) {
+      throw new NotFoundException('patientDiagnose not found');
+    }
+
+    patientDiagnose.approved = true;
+    patientDiagnose.doctor = await this.findById(
+      userId,
+      this.doctorsRepository,
+    );
+    await this.patientDiagnoseRepository.save(patientDiagnose);
+  }
+
+  public async removeApprovalForPatientDiagnose(userId, diagnoseId) {
+    const patientDiagnose = await this.patientDiagnoseRepository.findOne(
+      diagnoseId,
+      { relations: ['doctor'] },
+    );
+    if (patientDiagnose.doctor.id !== userId) {
+      throw new BadRequestException(
+        `Only the owner of the approvement can remove their approval and the [userId: ${userId}] is not the owner`,
+      );
+    }
+    patientDiagnose.approved = false;
+    patientDiagnose.doctor = null;
+    await this.patientDiagnoseRepository.save(patientDiagnose);
   }
 }
