@@ -1,0 +1,17 @@
+### Add new diagnose
+POST http://localhost:5000/diagnoses
+Content-Type: application/json
+
+{
+    "name": "cancer"
+}
+
+### Get all diagnoses
+GET http://localhost:5000/diagnoses
+
+
+### Get diagnose by id
+GET http://localhost:5000/diagnoses/1
+
+### Delete diagnose by id
+DELETE http://localhost:5000/diagnoses/3

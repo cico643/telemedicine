@@ -10,8 +10,11 @@ import { PatientRelative } from './entities/patientRelative.entity';
 import { Relative } from './entities/relative.entity';
 import PublicFile from 'src/providers/s3/publicFile.entity';
 import { FilesModule } from 'src/providers/s3/files.module';
-import { UsersController } from './users.controller';
-import { UsersService } from './users.service';
+import { UsersController } from './controllers/users.controller';
+import { UsersService } from './services/users.service';
+import { DiagnosesController } from './controllers/diagnoses.controller';
+import { DiagnosesService } from './services/diagnoses.service';
+import { Admin } from './entities/admin.entity';
 
 @Module({
   imports: [
@@ -25,11 +28,12 @@ import { UsersService } from './users.service';
       Relative,
       Doctor,
       PublicFile,
+      Admin,
     ]),
     FilesModule,
   ],
-  controllers: [UsersController],
-  providers: [UsersService, Logger],
+  controllers: [UsersController, DiagnosesController],
+  providers: [UsersService, DiagnosesService, Logger],
   exports: [UsersService],
 })
 export class UsersModule {}

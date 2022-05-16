@@ -12,14 +12,12 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { Serialize } from '../../common/interceptors/serialize.interceptor';
-import { genericErrorHandler } from './../../lib/genericErrorHandler';
-import { Roles } from './../../common/decorators/roles.decorator';
-import { CreateUserDto } from './dtos/create-user.dto';
-import { UserRole } from './entities/user.entity';
-import { UsersService } from './users.service';
+import { Serialize } from '../../../common/interceptors/serialize.interceptor';
+import { genericErrorHandler } from '../../../lib/genericErrorHandler';
+import { CreateUserDto } from '../dtos/create-user.dto';
+import { UsersService } from '../services/users.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { multerOptions } from './../../lib/multerOptions';
+import { multerOptions } from '../../../lib/multerOptions';
 import { Session as SessionType } from 'express-session';
 import { AuthGuard } from 'src/common/guards/auth.guard';
 

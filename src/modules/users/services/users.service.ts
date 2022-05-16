@@ -6,17 +6,20 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateUserDto } from './dtos/create-user.dto';
-import { Patient } from './entities/patient.entity';
+import { CreateUserDto } from '../dtos/create-user.dto';
+import { Patient } from '../entities/patient.entity';
 import * as bcrypt from 'bcrypt';
-import { FilesService } from 'src/providers/s3/files.service';
-import { Doctor } from './entities/doctor.entity';
+import { FilesService } from '../../../providers/s3/files.service';
+import { Doctor } from '../entities/doctor.entity';
+import { Admin } from '../entities/admin.entity';
+import PostgresErrorCode from 'src/providers/database/postgresErrorCodes.enum';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(Patient) private patientsRepository: Repository<Patient>,
     @InjectRepository(Doctor) private doctorsRepository: Repository<Patient>,
+    @InjectRepository(Admin) private adminsRepository: Repository<Admin>,
     private readonly filesService: FilesService,
   ) {}
 
@@ -24,7 +27,9 @@ export class UsersService {
     const targetRepository =
       userDto.type === 'doctor'
         ? this.doctorsRepository
-        : this.patientsRepository;
+        : userDto.type === 'patient'
+        ? this.patientsRepository
+        : this.adminsRepository;
     const hashedPassword = await bcrypt.hash(userDto.password, 10);
     try {
       const createdUser = await this.create(
@@ -52,7 +57,11 @@ export class UsersService {
   public async signin({ email, password, type }) {
     try {
       const targetRepository =
-        type === 'doctor' ? this.doctorsRepository : this.patientsRepository;
+        type === 'doctor'
+          ? this.doctorsRepository
+          : type === 'patient'
+          ? this.patientsRepository
+          : this.adminsRepository;
       const user = await this.getByEmail(email, targetRepository);
 
       const isValidPassword = await bcrypt.compare(password, user.password);
@@ -67,7 +76,7 @@ export class UsersService {
 
   async getByEmail(
     email: string,
-    targetRepository: Repository<Doctor | Patient>,
+    targetRepository: Repository<Doctor | Patient | Admin>,
   ) {
     const user = targetRepository.findOne({ email });
     if (user) {
@@ -76,7 +85,10 @@ export class UsersService {
     throw new NotFoundException('User with a given email is not found!');
   }
 
-  async findById(id: number, targetRepository: Repository<Doctor | Patient>) {
+  async findById(
+    id: number,
+    targetRepository: Repository<Doctor | Patient | Admin>,
+  ) {
     if (!id) {
       return null;
     }
@@ -85,7 +97,7 @@ export class UsersService {
 
   async create(
     userData: CreateUserDto,
-    targetRepository: Repository<Doctor | Patient>,
+    targetRepository: Repository<Doctor | Patient | Admin>,
   ) {
     const user = await targetRepository.create(userData);
     await targetRepository.save(user);
@@ -99,7 +111,11 @@ export class UsersService {
     filename: string,
   ) {
     const targetRepository =
-      type === 'doctor' ? this.doctorsRepository : this.patientsRepository;
+      type === 'doctor'
+        ? this.doctorsRepository
+        : type === 'patient'
+        ? this.patientsRepository
+        : this.adminsRepository;
     const avatar = await this.filesService.uploadPublicFile(
       imageBuffer,
       filename,
@@ -114,7 +130,11 @@ export class UsersService {
 
   public async deleteAvatar(id: number, type: string) {
     const targetRepository =
-      type === 'doctor' ? this.doctorsRepository : this.patientsRepository;
+      type === 'doctor'
+        ? this.doctorsRepository
+        : type === 'patient'
+        ? this.patientsRepository
+        : this.adminsRepository;
     const user = await this.findById(id, targetRepository);
     const fileId = user.avatar?.id;
     if (fileId) {

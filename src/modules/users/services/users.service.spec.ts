@@ -1,7 +1,7 @@
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Doctor } from './entities/doctor.entity';
+import { Doctor } from '../entities/doctor.entity';
 import { UsersService } from './users.service';
 
 const mockedConfigService = {
