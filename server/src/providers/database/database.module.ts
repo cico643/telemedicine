@@ -8,6 +8,7 @@ import {
   POSTGRES_USER,
 } from 'src/config';
 
+
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -17,8 +18,8 @@ import {
       username: POSTGRES_USER,
       password: POSTGRES_PASSWORD,
       database: POSTGRES_DB,
-      entities: [__dirname + '/../../**/*.entity.*'],
-      synchronize: true,
+      entities: [__dirname + '/../../*/.entity.*'],
+      synchronize: true
     }),
   ],
 })
