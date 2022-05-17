@@ -40,17 +40,21 @@ export class UsersController {
   @UseInterceptors(FileInterceptor('file', multerOptions))
   @HttpCode(201)
   async addAvatar(@Session() session: SessionType, @UploadedFile() file) {
-    const avatar = await this.usersService.addAvatar(
-      session.context.id,
-      session.context.type,
-      file.buffer,
-      file.originalname,
-    );
-    this.logger.log(
-      `Avatar added [userId: ${session.context.id}]`,
-      UsersController.name,
-    );
-    return avatar;
+    try {
+      const avatar = await this.usersService.addAvatar(
+        session.context.id,
+        session.context.type,
+        file.buffer,
+        file.originalname,
+      );
+      this.logger.log(
+        `Avatar added [userId: ${session.context.id}]`,
+        UsersController.name,
+      );
+      return avatar;
+    } catch (err) {
+      return genericErrorHandler(err);
+    }
   }
 
   @Delete('avatar')
