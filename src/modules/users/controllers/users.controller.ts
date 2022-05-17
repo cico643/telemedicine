@@ -9,6 +9,7 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Query,
   Session,
   UploadedFile,
   UseGuards,
@@ -35,6 +36,21 @@ export class UsersController {
     private usersService: UsersService,
     private readonly logger: Logger,
   ) {}
+
+  @Get('/:id?')
+  @HttpCode(200)
+  async getUser(
+    @Param('id', ParseIntPipe) id: number,
+    @Query('type') type: string,
+  ) {
+    try {
+      const targetRepository = this.usersService.findTargetRepository(type);
+      const user = await this.usersService.findById(id, targetRepository);
+      return user;
+    } catch (err) {
+      return genericErrorHandler(err);
+    }
+  }
 
   @Post('avatar')
   @UseInterceptors(FileInterceptor('file', multerOptions))

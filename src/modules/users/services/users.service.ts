@@ -27,7 +27,7 @@ import { Relative } from '../entities/relative.entity';
 export class UsersService {
   constructor(
     @InjectRepository(Patient) private patientsRepository: Repository<Patient>,
-    @InjectRepository(Doctor) private doctorsRepository: Repository<Patient>,
+    @InjectRepository(Doctor) private doctorsRepository: Repository<Doctor>,
     @InjectRepository(Admin) private adminsRepository: Repository<Admin>,
     @InjectRepository(PatientDiagnose)
     private patientDiagnoseRepository: Repository<PatientDiagnose>,
@@ -41,12 +41,7 @@ export class UsersService {
   ) {}
 
   public async register(userDto: CreateUserDto) {
-    const targetRepository =
-      userDto.type === 'doctor'
-        ? this.doctorsRepository
-        : userDto.type === 'patient'
-        ? this.patientsRepository
-        : this.adminsRepository;
+    const targetRepository = this.findTargetRepository(userDto.type);
     const hashedPassword = await bcrypt.hash(userDto.password, 10);
     try {
       const createdUser = await this.create(
@@ -73,12 +68,7 @@ export class UsersService {
 
   public async signin({ email, password, type }) {
     try {
-      const targetRepository =
-        type === 'doctor'
-          ? this.doctorsRepository
-          : type === 'patient'
-          ? this.patientsRepository
-          : this.adminsRepository;
+      const targetRepository = this.findTargetRepository(type);
       const user = await this.getByEmail(email, targetRepository);
 
       const isValidPassword = await bcrypt.compare(password, user.password);
@@ -89,6 +79,16 @@ export class UsersService {
     } catch (error) {
       throw new HttpException('Invalid Credentials', HttpStatus.BAD_REQUEST);
     }
+  }
+
+  findTargetRepository(type: string) {
+    const targetRepository =
+      type === 'doctor'
+        ? this.doctorsRepository
+        : type === 'patient'
+        ? this.patientsRepository
+        : this.adminsRepository;
+    return targetRepository;
   }
 
   async getByEmail(
@@ -127,12 +127,7 @@ export class UsersService {
     imageBuffer: Buffer,
     filename: string,
   ) {
-    const targetRepository =
-      type === 'doctor'
-        ? this.doctorsRepository
-        : type === 'patient'
-        ? this.patientsRepository
-        : this.adminsRepository;
+    const targetRepository = this.findTargetRepository(type);
     const avatar = await this.filesService.uploadPublicFile(
       imageBuffer,
       filename,
@@ -146,12 +141,7 @@ export class UsersService {
   }
 
   public async deleteAvatar(id: number, type: string) {
-    const targetRepository =
-      type === 'doctor'
-        ? this.doctorsRepository
-        : type === 'patient'
-        ? this.patientsRepository
-        : this.adminsRepository;
+    const targetRepository = this.findTargetRepository(type);
     const user = await this.findById(id, targetRepository);
     const fileId = user.avatar?.id;
     if (fileId) {
