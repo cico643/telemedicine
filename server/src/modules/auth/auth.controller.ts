@@ -4,6 +4,7 @@ import {
   HttpCode,
   Logger,
   Post,
+  Get,
   Session,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
@@ -20,6 +21,12 @@ export class AuthController {
     private authService: AuthService,
     private readonly logger: Logger,
   ) {}
+
+  @Get('/me')
+  @HttpCode(200)
+  async me(@Session() session: SessionType) {
+    return session.context;
+  }
 
   @Post('/signout')
   @HttpCode(200)

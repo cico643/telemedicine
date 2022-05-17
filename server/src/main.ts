@@ -25,7 +25,11 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   // Middleware
-  app.use(cors());
+  //app.use(cors());
+  app.enableCors({
+    origin: 'http://localhost:3000',
+    credentials: true,
+  });
   app.use(session(redisService.instance));
   app.use(cookieParser(SESSION_SECRET));
 
