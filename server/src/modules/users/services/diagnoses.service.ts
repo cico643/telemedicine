@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import PostgresErrorCode from 'src/providers/database/postgresErrorCodes.enum';
+import PostgresErrorCode from '../../../providers/database/postgresErrorCodes.enum';
 import { Repository } from 'typeorm';
 import { CreateDiagnoseDto } from '../dtos/create-diagnose.dto';
 import { Diagnose } from '../entities/diagnose.entity';

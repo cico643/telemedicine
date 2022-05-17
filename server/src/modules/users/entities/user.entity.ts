@@ -1,4 +1,4 @@
-import PublicFile from 'src/providers/s3/publicFile.entity';
+import PublicFile from '../../../providers/s3/publicFile.entity';
 import { Column, JoinColumn, OneToOne } from 'typeorm';
 
 export enum UserRole {

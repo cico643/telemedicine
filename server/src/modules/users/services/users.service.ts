@@ -13,7 +13,7 @@ import * as bcrypt from 'bcrypt';
 import { FilesService } from '../../../providers/s3/files.service';
 import { Doctor } from '../entities/doctor.entity';
 import { Admin } from '../entities/admin.entity';
-import PostgresErrorCode from 'src/providers/database/postgresErrorCodes.enum';
+import PostgresErrorCode from '../../../providers/database/postgresErrorCodes.enum';
 import { CreatePatientDiagnoseDto } from '../dtos/create-patient-diagnose.dto';
 import { PatientDiagnose } from '../entities/patientDiagnose.entity';
 import { DiagnosesService } from './diagnoses.service';
