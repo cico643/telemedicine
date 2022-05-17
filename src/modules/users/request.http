@@ -77,3 +77,25 @@ Content-Type: application/json
 
 ### Get all diagnoses of a patient
 GET http://localhost:5000/users/1/patient-medications
+
+
+####### RELATIVES
+
+### Add a new relative for the patient
+POST http://localhost:5000/users/1/relatives
+Content-Type: application/json
+
+{
+    "name": "Yusuf Mert",
+    "surname": "Toros",
+    "phoneNumber": "+905355353535",
+    "relation" : "friend"
+}
+
+### Get all relatives for the target patient
+GET http://localhost:5000/users/1/relatives
+Content-Type: application/json
+
+### Get specified relative for the target patient
+GET http://localhost:5000/users/1/relatives/1
+Content-Type: application/json

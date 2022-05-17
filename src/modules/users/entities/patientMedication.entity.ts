@@ -7,9 +7,7 @@ export class PatientMedication {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Patient, (patient) => patient.patientMedications, {
-    cascade: true,
-  })
+  @ManyToOne(() => Patient, (patient) => patient.patientMedications)
   patient: Patient;
 
   @ManyToOne(() => Medication, (medication) => medication.patientMedications, {

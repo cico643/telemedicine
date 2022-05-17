@@ -20,6 +20,8 @@ import { DiagnosesService } from './diagnoses.service';
 import { CreatePatientMedicationDto } from '../dtos/create-patient-medication.dto';
 import { MedicationsService } from './medications.service';
 import { PatientMedication } from '../entities/patientMedication.entity';
+import { CreateRelativeDto } from '../dtos/create-relative.dto';
+import { Relative } from '../entities/relative.entity';
 
 @Injectable()
 export class UsersService {
@@ -31,6 +33,8 @@ export class UsersService {
     private patientDiagnoseRepository: Repository<PatientDiagnose>,
     @InjectRepository(PatientMedication)
     private patientMedicationRepository: Repository<PatientMedication>,
+    @InjectRepository(Relative)
+    private relativesRepository: Repository<Relative>,
     private readonly diagnosesService: DiagnosesService,
     private readonly medicationsService: MedicationsService,
     private readonly filesService: FilesService,
@@ -251,5 +255,27 @@ export class UsersService {
       medicationId,
     );
     return patientMedication;
+  }
+
+  public async addRelative(relativeDto: CreateRelativeDto, userId: number) {
+    const patient = await this.findById(userId, this.patientsRepository);
+    const relative = await this.relativesRepository.create({
+      ...relativeDto,
+      patient,
+    });
+    await this.relativesRepository.save(relative);
+    return relative;
+  }
+
+  public async getRelatives(userId: number) {
+    const relatives = await this.relativesRepository.find({
+      where: { patient: userId },
+    });
+    return relatives;
+  }
+
+  public async getRelativeById(id: number) {
+    const relative = await this.relativesRepository.findOne(id);
+    return relative;
   }
 }

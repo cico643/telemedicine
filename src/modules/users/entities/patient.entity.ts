@@ -3,7 +3,7 @@ import { Document } from '../../documents/document.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { PatientDiagnose } from './patientDiagnose.entity';
 import { PatientMedication } from './patientMedication.entity';
-import { PatientRelative } from './patientRelative.entity';
+import { Relative } from './relative.entity';
 import { User } from './user.entity';
 
 @Entity()
@@ -42,12 +42,12 @@ export class Patient extends User {
   )
   patientMedications?: PatientMedication[];
 
-  @OneToMany(
-    () => PatientRelative,
-    (patientRelative) => patientRelative.patient,
-    { eager: true, cascade: true, nullable: true },
-  )
-  patientRelatives?: PatientRelative[];
+  @OneToMany(() => Relative, (relative) => relative.patient, {
+    eager: true,
+    cascade: true,
+    nullable: true,
+  })
+  relatives?: Relative[];
 
   toJSON() {
     delete this.password;

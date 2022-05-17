@@ -6,8 +6,6 @@ import { Medication } from './entities/medication.entity';
 import { Patient } from './entities/patient.entity';
 import { PatientDiagnose } from './entities/patientDiagnose.entity';
 import { PatientMedication } from './entities/patientMedication.entity';
-import { PatientRelative } from './entities/patientRelative.entity';
-import { Relative } from './entities/relative.entity';
 import PublicFile from 'src/providers/s3/publicFile.entity';
 import { FilesModule } from 'src/providers/s3/files.module';
 import { UsersController } from './controllers/users.controller';
@@ -17,6 +15,7 @@ import { DiagnosesService } from './services/diagnoses.service';
 import { Admin } from './entities/admin.entity';
 import { MedicationsController } from './controllers/medications.controller';
 import { MedicationsService } from './services/medications.service';
+import { Relative } from './entities/relative.entity';
 
 @Module({
   imports: [
@@ -26,7 +25,6 @@ import { MedicationsService } from './services/medications.service';
       Patient,
       PatientDiagnose,
       PatientMedication,
-      PatientRelative,
       Relative,
       Doctor,
       PublicFile,

@@ -25,6 +25,7 @@ import { Roles } from 'src/common/decorators/roles.decorator';
 import { UserRole } from '../entities/user.entity';
 import { CreatePatientDiagnoseDto } from '../dtos/create-patient-diagnose.dto';
 import { CreatePatientMedicationDto } from '../dtos/create-patient-medication.dto';
+import { CreateRelativeDto } from '../dtos/create-relative.dto';
 
 @UseGuards(AuthGuard)
 @ApiTags('users')
@@ -223,6 +224,64 @@ export class UsersController {
         UsersController.name,
       );
       return patientMedication;
+    } catch (err) {
+      return genericErrorHandler(err);
+    }
+  }
+
+  @Post('/:userId/relatives')
+  @HttpCode(201)
+  @Roles(UserRole.Patient, UserRole.Admin)
+  async addRelative(
+    @Body() body: CreateRelativeDto,
+    @Param('userId', ParseIntPipe) userId: number,
+  ) {
+    try {
+      const relative = await this.usersService.addRelative(body, userId);
+
+      this.logger.log(
+        `Relative added for patient [userId: ${userId}]`,
+        UsersController.name,
+      );
+
+      return relative;
+    } catch (err) {
+      return genericErrorHandler(err);
+    }
+  }
+
+  @Get('/:userId/relatives')
+  @HttpCode(200)
+  async getRelatives(@Param('userId', ParseIntPipe) userId: number) {
+    try {
+      const relatives = await this.usersService.getRelatives(userId);
+
+      this.logger.log(
+        `Fetched all relatives of [userId: ${userId}]`,
+        UsersController.name,
+      );
+
+      return relatives;
+    } catch (err) {
+      return genericErrorHandler(err);
+    }
+  }
+
+  @Get('/:userId/relatives/:relativeId')
+  @HttpCode(200)
+  async getRelativeById(
+    @Param('userId', ParseIntPipe) userId: number,
+    @Param('relativeId', ParseIntPipe) relativeId: number,
+  ) {
+    try {
+      const relative = await this.usersService.getRelativeById(relativeId);
+
+      this.logger.log(
+        `Fetched relative for patient [userId: ${userId}]`,
+        UsersController.name,
+      );
+
+      return relative;
     } catch (err) {
       return genericErrorHandler(err);
     }
