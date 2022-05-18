@@ -6,12 +6,14 @@ import {
   Post,
   Get,
   Session,
+  Res,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { genericErrorHandler } from '../../lib/genericErrorHandler';
 import { CreateUserDto } from '../users/dtos/create-user.dto';
 import { SignInUserDto } from '../users/dtos/sign-in-user.dto';
 import { AuthService } from './auth.service';
+import { Response } from 'express';
 import { Session as SessionType } from 'express-session';
 
 @ApiTags('auth')
@@ -30,9 +32,14 @@ export class AuthController {
 
   @Post('/signout')
   @HttpCode(200)
-  async signout(@Session() session: SessionType) {
+  async signout(
+    @Session() session: SessionType,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     session.context = null;
     session.destroy(null);
+
+    res.clearCookie('session_token');
   }
 
   @Post('/signup')
