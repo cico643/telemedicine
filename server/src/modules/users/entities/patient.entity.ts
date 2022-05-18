@@ -31,7 +31,7 @@ export class Patient extends User {
   @OneToMany(
     () => PatientDiagnose,
     (patientDiagnose) => patientDiagnose.patient,
-    { nullable: true },
+    { nullable: true, eager: true },
   )
   patientDiagnoses?: PatientDiagnose[];
 
