@@ -9,7 +9,10 @@ Content-Type: application/json
     "surname": "Yeşildağ",
     "address": "xyz mh. abc sk. No:56 Osmangazi/Bursa",
     "phoneNumber": "+905354330771",
-    "type" : "admin"
+    "height": 185,
+    "weight": 80,
+    "bloodType": "B+",
+    "type" : "patient"
 }
 
 ### Sign in as an existing user

@@ -3,10 +3,12 @@ import {
   IsEmail,
   IsEnum,
   IsNotEmpty,
+  IsNumber,
   IsString,
   Matches,
   MinLength,
 } from 'class-validator';
+import { BloodTypes } from '../entities/patient.entity';
 import { UserRole } from '../entities/user.entity';
 
 export class CreateUserDto {
@@ -48,4 +50,18 @@ export class CreateUserDto {
   @ApiProperty({ enum: UserRole, required: true })
   @IsEnum(UserRole)
   type: UserRole;
+
+  @ApiProperty({ enum: BloodTypes, required: true })
+  @IsEnum(BloodTypes)
+  bloodType: BloodTypes;
+
+  @ApiProperty({ required: true })
+  @IsNumber()
+  @IsNotEmpty()
+  height: number;
+
+  @ApiProperty({ required: true })
+  @IsNumber()
+  @IsNotEmpty()
+  weight: number;
 }

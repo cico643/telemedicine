@@ -6,6 +6,17 @@ import { PatientMedication } from './patientMedication.entity';
 import { Relative } from './relative.entity';
 import { User } from './user.entity';
 
+export enum BloodTypes {
+  OPositive = '0+',
+  ONegative = '0-',
+  APositive = 'A+',
+  ANegative = 'A-',
+  BPositive = 'B+',
+  BNegative = 'B-',
+  ABPositive = 'AB+',
+  ABNegative = 'AB-',
+}
+
 @Entity()
 export class Patient extends User {
   @PrimaryGeneratedColumn()
@@ -13,6 +24,18 @@ export class Patient extends User {
 
   @Column({ unique: true })
   email: string;
+
+  @Column()
+  height: number;
+
+  @Column()
+  weight: number;
+
+  @Column({
+    type: 'enum',
+    enum: BloodTypes,
+  })
+  bloodType: BloodTypes;
 
   @OneToMany(() => Appointment, (appointment) => appointment.patient, {
     eager: true,
