@@ -15,6 +15,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { SignIn } from "../../api";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { Alert, Fade } from "@mui/material";
 
 function Copyright(props) {
   return (
@@ -39,22 +40,27 @@ const theme = createTheme();
 export default function SignInSide() {
   const { logIn } = useAuth();
   const navigate = useNavigate();
+  const [error1, setError] = React.useState(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
-    const response = await SignIn({
-      email: data.get("email"),
-      password: data.get("password"),
-      type: "patient",
-    });
-    if (response) {
-      logIn(response);
-      navigate("/");
+    try {
+      const response = await SignIn({
+        email: data.get("email"),
+        password: data.get("password"),
+        type: "patient",
+      });
+      if (response) {
+        logIn(response);
+        navigate("/");
+      }
+    } catch (error) {
+      console.log(error);
+      setTimeout(() => {
+        setError(true);
+      }, 100);
+      setError(false);
     }
   };
 
@@ -133,6 +139,14 @@ export default function SignInSide() {
                 control={<Checkbox value="remember" color="primary" />}
                 label="Remember me"
               />
+              <Fade in={error1}>
+                <Alert
+                  sx={{ display: `${error1 ? "" : "none"}` }}
+                  severity="error"
+                >
+                  Wrong Parameters
+                </Alert>
+              </Fade>
               <Button
                 type="submit"
                 fullWidth
