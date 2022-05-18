@@ -15,8 +15,19 @@ export const SignUp = async (body) => {
   return data;
 };
 
+export const SignOut = async () => {
+  await axios.post(`${baseUrl}/auth/signout`, {}, { withCredentials: true });
+};
+
 export const getCurrentUser = async () => {
   const { data } = await axios.get(`${baseUrl}/auth/me`, {
+    withCredentials: true,
+  });
+  return data;
+};
+
+export const getSpecificUser = async (id, type) => {
+  const { data } = await axios.get(`${baseUrl}/users/${id}?type=${type}`, {
     withCredentials: true,
   });
   return data;

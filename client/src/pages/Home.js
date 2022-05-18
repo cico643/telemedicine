@@ -8,6 +8,12 @@ import Link from "@mui/material/Link";
 import Navigator from "../components/Navigator";
 import Content from "../components/Content";
 import Header from "../components/Header";
+import { useAuth } from "../context/AuthContext";
+import { getSpecificUser } from "../api";
+import { useUserContext } from "../context/UserContext";
+import { CircularProgress } from "@mui/material";
+import Medications from "../components/Medications";
+import Relatives from "../components/Relatives";
 
 function Copyright() {
   return (
@@ -169,13 +175,36 @@ const drawerWidth = 256;
 export default function Paperbase() {
   const [selectedId, setSelectedId] = React.useState("Summary");
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [isLoading, setLoading] = React.useState(true);
   const isSmUp = useMediaQuery(theme.breakpoints.up("sm"));
-
+  const { user } = useAuth();
+  const { setUser } = useUserContext();
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
-  return (
+  const whichContent = () => {
+    switch (selectedId) {
+      case "Medications":
+        return <Medications></Medications>;
+      case "Relatives":
+        return <Relatives></Relatives>;
+      default:
+        return <Content></Content>;
+    }
+  };
+
+  React.useEffect(() => {
+    (async () => {
+      const data = await getSpecificUser(user.id, user.type);
+      setUser(data);
+      setLoading(false);
+    })();
+  }, [user.id, user.type, setUser]);
+
+  return isLoading ? (
+    <CircularProgress />
+  ) : (
     <ThemeProvider theme={theme}>
       <Box sx={{ display: "flex", minHeight: "100vh" }}>
         <CssBaseline />
@@ -207,7 +236,7 @@ export default function Paperbase() {
             component="main"
             sx={{ flex: 1, py: 6, px: 4, bgcolor: "#eaeff1" }}
           >
-            <Content />
+            {whichContent()}
           </Box>
           <Box component="footer" sx={{ p: 2, bgcolor: "#eaeff1" }}>
             <Copyright />

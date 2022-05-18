@@ -16,6 +16,7 @@ import { SignIn } from "../../api";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Alert, Fade } from "@mui/material";
+import UserTypeSelector from "../UserTypeSelector";
 
 function Copyright(props) {
   return (
@@ -41,6 +42,7 @@ export default function SignInSide() {
   const { logIn } = useAuth();
   const navigate = useNavigate();
   const [error1, setError] = React.useState(false);
+  const [userType, setUserType] = React.useState(null);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -49,7 +51,7 @@ export default function SignInSide() {
       const response = await SignIn({
         email: data.get("email"),
         password: data.get("password"),
-        type: "patient",
+        type: userType,
       });
       if (response) {
         logIn(response);
@@ -64,6 +66,76 @@ export default function SignInSide() {
     }
   };
 
+  const leftSide = () => {
+    if (userType) {
+      return (
+        <>
+          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+            <LockOutlinedIcon />
+          </Avatar>
+          <Typography component="h1" variant="h5">
+            Sign in
+          </Typography>
+          <Box
+            component="form"
+            noValidate
+            onSubmit={handleSubmit}
+            sx={{ mt: 1 }}
+          >
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="email"
+              label="Email Address"
+              name="email"
+              autoComplete="email"
+              autoFocus
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Password"
+              type="password"
+              id="password"
+              autoComplete="current-password"
+            />
+            <FormControlLabel
+              control={<Checkbox value="remember" color="primary" />}
+              label="Remember me"
+            />
+            <Fade in={error1}>
+              <Alert
+                sx={{ display: `${error1 ? "" : "none"}` }}
+                severity="error"
+              >
+                Wrong Parameters
+              </Alert>
+            </Fade>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2, backgroundColor: "#498ffe" }}
+            >
+              Sign In
+            </Button>
+            <Grid container>
+              <Grid item sx={{ margin: "auto" }}>
+                <Link href="/SignUp" variant="body2">
+                  {"Don't have an account? Sign Up"}
+                </Link>
+              </Grid>
+            </Grid>
+            <Copyright sx={{ mt: 5 }} />
+          </Box>
+        </>
+      );
+    }
+    return <UserTypeSelector setUserType={setUserType}></UserTypeSelector>;
+  };
   return (
     <ThemeProvider theme={theme}>
       <Grid container component="main" sx={{ height: "100vh" }}>
@@ -103,67 +175,7 @@ export default function SignInSide() {
               alignItems: "center",
             }}
           >
-            <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-              <LockOutlinedIcon />
-            </Avatar>
-            <Typography component="h1" variant="h5">
-              Sign in
-            </Typography>
-            <Box
-              component="form"
-              noValidate
-              onSubmit={handleSubmit}
-              sx={{ mt: 1 }}
-            >
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="email"
-                label="Email Address"
-                name="email"
-                autoComplete="email"
-                autoFocus
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-              />
-              <FormControlLabel
-                control={<Checkbox value="remember" color="primary" />}
-                label="Remember me"
-              />
-              <Fade in={error1}>
-                <Alert
-                  sx={{ display: `${error1 ? "" : "none"}` }}
-                  severity="error"
-                >
-                  Wrong Parameters
-                </Alert>
-              </Fade>
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2, backgroundColor: "#498ffe" }}
-              >
-                Sign In
-              </Button>
-              <Grid container>
-                <Grid item sx={{ margin: "auto" }}>
-                  <Link href="/SignUp" variant="body2">
-                    {"Don't have an account? Sign Up"}
-                  </Link>
-                </Grid>
-              </Grid>
-              <Copyright sx={{ mt: 5 }} />
-            </Box>
+            {leftSide()}
           </Box>
         </Grid>
       </Grid>
