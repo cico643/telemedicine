@@ -12,10 +12,10 @@ export class CreatePatientMedicationDto {
   @IsNotEmpty()
   startDate: string;
 
-  @ApiProperty({ required: true })
+  @ApiProperty({ required: true, nullable: true })
   @IsISO8601() // YYYY-MM-DD date format
   @IsNotEmpty()
-  endDate: string;
+  endDate?: string;
 
   @ApiProperty({ required: true })
   @IsNumber()

@@ -10,7 +10,7 @@ export class PatientMedication {
   @Column({ type: 'date' })
   startDate: string;
 
-  @Column({ type: 'date' })
+  @Column({ type: 'date', nullable: true })
   endDate: string;
 
   @Column({})
