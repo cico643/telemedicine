@@ -11,7 +11,7 @@ export class PatientMedication {
   startDate: string;
 
   @Column({ type: 'date', nullable: true })
-  endDate: string;
+  endDate?: string;
 
   @Column({})
   dailyDosage: number;
