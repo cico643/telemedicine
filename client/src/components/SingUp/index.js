@@ -20,10 +20,6 @@ export default function SignUpSide() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
     const response = await SignUp({
       email: data.get("email"),
       password: data.get("password"),
@@ -33,7 +29,6 @@ export default function SignUpSide() {
       type: "patient",
       phoneNumber: data.get("phoneNumber"),
     });
-    console.log(response);
     if (response) {
       navigate("/signIn");
     }

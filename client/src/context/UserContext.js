@@ -4,8 +4,16 @@ const UserContext = createContext();
 
 const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const value = { user, setUser };
-
+  const [relatives, setRelatives] = useState([]);
+  const [medications, setMedications] = useState([]);
+  const value = {
+    relatives,
+    user,
+    medications,
+    setUser,
+    setRelatives,
+    setMedications,
+  };
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };
 

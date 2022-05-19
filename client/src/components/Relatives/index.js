@@ -1,33 +1,55 @@
-import { Button } from "@mui/material";
+import { Box, Button, FormControl, InputLabel } from "@mui/material";
 import * as React from "react";
 import { useUserContext } from "../../context/UserContext";
 import MUIDataTable from "mui-datatables";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Modal from "@mui/material/Modal";
-
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
-  p: 4,
-};
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import TextField from "@mui/material/TextField";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
+import { addNewRelative, getSpecificUserRelatives } from "../../api";
 
 export default function Relatives() {
   const [openModal, setOpenModal] = React.useState(false);
   const handleModalOpen = () => setOpenModal(true);
   const handleModalClose = () => setOpenModal(false);
+  const [relationType, setRelationType] = React.useState("mother");
   const columns = ["First Name", "Last Name", "Phone Number", "Relation"];
-  const { user } = useUserContext();
-  const relativesWithoutId = user.relatives.map(({ id, relation, ...rest }) => {
-    relation = relation.charAt(0).toUpperCase() + relation.slice(1);
-    return Object.values({ ...rest, relation });
-  });
+  const { user, relatives, setRelatives } = useUserContext();
+
+  React.useEffect(() => {
+    getSpecificUserRelatives(user.id).then((response) => {
+      setRelatives(
+        response.map(({ id, relation, ...rest }) => {
+          relation = relation.charAt(0).toUpperCase() + relation.slice(1);
+          return Object.values({ ...rest, relation });
+        })
+      );
+    });
+  }, [setRelatives, user.id]);
+
+  const handleRelationChange = (event) => {
+    setRelationType(event.target.value);
+  };
+
+  const handleAddRelative = async (event) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    const response = await addNewRelative(user.id, {
+      name: data.get("name"),
+      surname: data.get("surname"),
+      relation: data.get("relation"),
+      phoneNumber: data.get("phoneNumber"),
+    });
+    if (response) {
+      delete response.patient;
+      delete response.id;
+      setRelatives([...relatives, Object.values(response)]);
+      handleModalClose();
+    }
+  };
 
   const options = {
     filterType: "checkbox",
@@ -53,25 +75,71 @@ export default function Relatives() {
       </div>
       <MUIDataTable
         title={"Relatives"}
-        data={relativesWithoutId}
+        data={relatives}
         columns={columns}
         options={options}
       />
-      <Modal
-        open={openModal}
-        onClose={handleModalClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            Text in a modal
-          </Typography>
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-          </Typography>
-        </Box>
-      </Modal>
+      <Dialog open={openModal} onClose={handleModalClose}>
+        <DialogTitle>Add New Relative</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            As the person to be called in an emergency, information is provided
+            in line with the consent given by your patient.
+          </DialogContentText>
+          <Box component="form" onSubmit={handleAddRelative} noValidate>
+            <TextField
+              autoFocus
+              margin="dense"
+              id="name"
+              name="name"
+              label="First Name"
+              type="text"
+              fullWidth
+              variant="standard"
+            />
+            <TextField
+              margin="dense"
+              id="surname"
+              name="surname"
+              label="Last Name"
+              type="text"
+              fullWidth
+              variant="standard"
+            />
+            <TextField
+              margin="dense"
+              id="phoneNumber"
+              name="phoneNumber"
+              label="Phone Number"
+              type="tel"
+              fullWidth
+              variant="standard"
+            />
+            <FormControl fullWidth sx={{ marginTop: "10px" }}>
+              <InputLabel id="relation-select-label">Relation</InputLabel>
+              <Select
+                labelId="relation-select-label"
+                id="relation"
+                name="relation"
+                value={relationType}
+                label="Relation"
+                onChange={handleRelationChange}
+              >
+                <MenuItem value={"mother"}>Mother</MenuItem>
+                <MenuItem value={"father"}>Father</MenuItem>
+                <MenuItem value={"sister"}>Sister</MenuItem>
+                <MenuItem value={"brother"}>Brother</MenuItem>
+                <MenuItem value={"aunt"}>Aunt</MenuItem>
+                <MenuItem value={"uncle"}>Uncle</MenuItem>
+                <MenuItem value={"cousin"}>Cousin</MenuItem>
+                <MenuItem value={"friend"}>Friend</MenuItem>
+              </Select>
+            </FormControl>
+            <Button onClick={handleModalClose}>Cancel</Button>
+            <Button type="submit">Add</Button>
+          </Box>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

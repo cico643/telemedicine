@@ -32,3 +32,38 @@ export const getSpecificUser = async (id, type) => {
   });
   return data;
 };
+
+export const addNewRelative = async (id, body) => {
+  const { data } = await axios.post(`${baseUrl}/users/${id}/relatives`, body, {
+    withCredentials: true,
+  });
+  return data;
+};
+
+export const getSpecificUserRelatives = async (id) => {
+  const { data } = await axios.get(`${baseUrl}/users/${id}/relatives`, {
+    withCredentials: true,
+  });
+  return data;
+};
+
+export const getSpecificUserMedications = async (id) => {
+  const { data } = await axios.get(
+    `${baseUrl}/users/${id}/patient-medications`,
+    {
+      withCredentials: true,
+    }
+  );
+  return data;
+};
+
+export const addNewPatientMedication = async (id, body) => {
+  const { data } = await axios.post(
+    `${baseUrl}/users/${id}/patient-medications`,
+    body,
+    {
+      withCredentials: true,
+    }
+  );
+  return data;
+};
