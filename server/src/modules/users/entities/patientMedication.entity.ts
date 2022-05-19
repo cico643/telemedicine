@@ -7,13 +7,13 @@ export class PatientMedication {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'date' })
+  @Column()
   startDate: string;
 
-  @Column({ type: 'date', nullable: true })
+  @Column({ nullable: true })
   endDate?: string;
 
-  @Column({})
+  @Column()
   dailyDosage: number;
 
   @ManyToOne(() => Patient, (patient) => patient.patientMedications)
