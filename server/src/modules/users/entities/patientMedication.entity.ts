@@ -1,4 +1,4 @@
-import { Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Medication } from './medication.entity';
 import { Patient } from './patient.entity';
 
@@ -6,6 +6,12 @@ import { Patient } from './patient.entity';
 export class PatientMedication {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Column({ type: 'date' })
+  startDate: string;
+
+  @Column({ type: 'date' })
+  endDate: string;
 
   @ManyToOne(() => Patient, (patient) => patient.patientMedications)
   patient: Patient;
