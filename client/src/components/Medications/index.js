@@ -8,14 +8,27 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import Select from "@mui/material/Select";
-import { addNewPatientMedication, getSpecificUserMedications } from "../../api";
+import {
+  addNewPatientMedication,
+  getSpecificUserMedications,
+  getAllMedications,
+} from "../../api";
 
 export default function Medications() {
   const [openModal, setOpenModal] = React.useState(false);
   const handleModalOpen = () => setOpenModal(true);
   const handleModalClose = () => setOpenModal(false);
-  const [relationType, setRelationType] = React.useState("mother");
+
+  const [allMedications, setAllMedications] = React.useState([]);
+
+  const [newMedication, setNewMedication] = React.useState("Aferin+");
+  const [startDate, setStartDate] = React.useState(new Date());
+  const [endDate, setEndDate] = React.useState(new Date());
+
   const columns = ["Medication Name", "Daily Dosage", "Start Date", "End Date"];
   const { user, medications, setMedications } = useUserContext();
 
@@ -36,28 +49,46 @@ export default function Medications() {
         })
       );
     });
+    getAllMedications().then((response) => {
+      setAllMedications(response);
+    });
   }, [setMedications, user.id]);
 
-  const handleRelationChange = (event) => {
-    setRelationType(event.target.value);
+  const medicationMenuItems = (medications) => {
+    return medications.map((medication) => {
+      return <MenuItem value={medication.id}>{medication.name}</MenuItem>;
+    });
   };
 
-  // const handleAddRelative = async (event) => {
-  //   event.preventDefault();
-  //   const data = new FormData(event.currentTarget);
-  //   const response = await addNewRelative(user.id, {
-  //     name: data.get("name"),
-  //     surname: data.get("surname"),
-  //     relation: data.get("relation"),
-  //     phoneNumber: data.get("phoneNumber"),
-  //   });
-  //   if (response) {
-  //     delete response.patient;
-  //     delete response.id;
-  //     setMedication([...relatives, Object.values(response)]);
-  //     handleModalClose();
-  //   }
-  // };
+  const handleMedicationChange = (event) => {
+    setNewMedication(event.target.value);
+  };
+
+  const handleAddPatientMedication = async (event) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    const response = await addNewPatientMedication(user.id, {
+      medicationId: Number(data.get("medicationId")),
+      startDate: startDate.toISOString().split("T")[0],
+      endDate: endDate.toISOString().split("T")[0],
+      dailyDosage: Number(data.get("dailyDosage")),
+    });
+    if (response) {
+      delete response.patient;
+      delete response.id;
+      const medicationName = response.medication.name;
+      delete response.medication;
+      response["medicationName"] = medicationName;
+      if (response["endDate"] === null) {
+        response["endDate"] = "-";
+      }
+      const data = Object.values(response);
+      const lastItem = data.pop();
+      data.unshift(lastItem);
+      setMedications([...medications, data]);
+      handleModalClose();
+    }
+  };
 
   const options = {
     filterType: "checkbox",
@@ -91,56 +122,55 @@ export default function Medications() {
         <DialogTitle>Add New Medications</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            As the person to be called in an emergency, information is provided
-            in line with the consent given by your patient.
+            Add the medications that you use for doctors to see.
           </DialogContentText>
-          <Box component="form" noValidate>
+          <Box
+            component="form"
+            onSubmit={handleAddPatientMedication}
+            noValidate
+            sx={{ paddingTop: "10px" }}
+          >
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <DatePicker
+                label="Start Date"
+                inputFormat="dd/MM/yyyy"
+                value={startDate}
+                onChange={(newValue) => {
+                  setStartDate(newValue);
+                }}
+                renderInput={(params) => <TextField {...params} />}
+              />
+              <DatePicker
+                label="End Date"
+                inputFormat="dd/MM/yyyy"
+                value={endDate}
+                onChange={(newValue) => {
+                  setEndDate(newValue);
+                }}
+                renderInput={(params) => <TextField {...params} />}
+              />
+            </LocalizationProvider>
             <TextField
               autoFocus
               margin="dense"
-              id="name"
-              name="name"
-              label="First Name"
-              type="text"
-              fullWidth
-              variant="standard"
-            />
-            <TextField
-              margin="dense"
-              id="surname"
-              name="surname"
-              label="Last Name"
-              type="text"
-              fullWidth
-              variant="standard"
-            />
-            <TextField
-              margin="dense"
-              id="phoneNumber"
-              name="phoneNumber"
-              label="Phone Number"
-              type="tel"
+              id="dailyDosage"
+              name="dailyDosage"
+              label="Daily Dosage"
+              type="number"
               fullWidth
               variant="standard"
             />
             <FormControl fullWidth sx={{ marginTop: "10px" }}>
-              <InputLabel id="relation-select-label">Relation</InputLabel>
+              <InputLabel id="relation-select-label">Medication</InputLabel>
               <Select
                 labelId="relation-select-label"
-                id="relation"
-                name="relation"
-                value={relationType}
+                id="medicationId"
+                name="medicationId"
+                value={newMedication}
                 label="Relation"
-                onChange={handleRelationChange}
+                onChange={handleMedicationChange}
               >
-                <MenuItem value={"mother"}>Mother</MenuItem>
-                <MenuItem value={"father"}>Father</MenuItem>
-                <MenuItem value={"sister"}>Sister</MenuItem>
-                <MenuItem value={"brother"}>Brother</MenuItem>
-                <MenuItem value={"aunt"}>Aunt</MenuItem>
-                <MenuItem value={"uncle"}>Uncle</MenuItem>
-                <MenuItem value={"cousin"}>Cousin</MenuItem>
-                <MenuItem value={"friend"}>Friend</MenuItem>
+                {medicationMenuItems(allMedications)}
               </Select>
             </FormControl>
             <Button onClick={handleModalClose}>Cancel</Button>

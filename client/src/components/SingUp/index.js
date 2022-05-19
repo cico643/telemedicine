@@ -12,6 +12,7 @@ import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { SignUp } from "../../api";
 import { useNavigate } from "react-router-dom";
+import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 
 const theme = createTheme();
 
@@ -28,10 +29,21 @@ export default function SignUpSide() {
       address: data.get("address"),
       type: "patient",
       phoneNumber: data.get("phoneNumber"),
+      height: Number(data.get("height")),
+      weight: Number(data.get("weight")),
+      bloodType: data.get("bloodType"),
     });
     if (response) {
-      navigate("/signIn");
+      navigate("/signIn", {
+        state: { userType: "patient", signUpSuccess: true },
+      });
     }
+  };
+
+  const [bloodType, setBloodType] = React.useState("A+");
+
+  const handleBloodTypeChange = (event) => {
+    setBloodType(event.target.value);
   };
 
   return (
@@ -66,7 +78,7 @@ export default function SignUpSide() {
         >
           <Box
             sx={{
-              my: 8,
+              my: 2,
               mx: 4,
               display: "flex",
               flexDirection: "column",
@@ -149,6 +161,49 @@ export default function SignUpSide() {
                     id="phoneNumber"
                     autoComplete="tel"
                   />
+                </Grid>
+                <Grid item xs={4}>
+                  <TextField
+                    required
+                    fullWidth
+                    name="height"
+                    label="Height"
+                    type="number"
+                    id="height"
+                  />
+                </Grid>
+                <Grid item xs={4}>
+                  <TextField
+                    required
+                    fullWidth
+                    name="weight"
+                    label="Weight"
+                    type="number"
+                    id="weight"
+                  />
+                </Grid>
+                <Grid item xs={4}>
+                  <FormControl fullWidth>
+                    <InputLabel id="blood-type-label">Blood Type</InputLabel>
+                    <Select
+                      labelId="blood-type-label"
+                      id="bloodType"
+                      value={bloodType}
+                      label="Blood Type"
+                      name="bloodType"
+                      onChange={handleBloodTypeChange}
+                      xs={{ width: "100px" }}
+                    >
+                      <MenuItem value={"A+"}>A+</MenuItem>
+                      <MenuItem value={"A-"}>A-</MenuItem>
+                      <MenuItem value={"B+"}>B+</MenuItem>
+                      <MenuItem value={"B-"}>B-</MenuItem>
+                      <MenuItem value={"AB+"}>AB+</MenuItem>
+                      <MenuItem value={"AB-"}>AB-</MenuItem>
+                      <MenuItem value={"O+"}>O+</MenuItem>
+                      <MenuItem value={"O-"}>O-</MenuItem>
+                    </Select>
+                  </FormControl>
                 </Grid>
               </Grid>
               <Button

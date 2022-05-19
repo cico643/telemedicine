@@ -7,8 +7,8 @@ import { Relative } from './relative.entity';
 import { User } from './user.entity';
 
 export enum BloodTypes {
-  OPositive = '0+',
-  ONegative = '0-',
+  OPositive = 'O+',
+  ONegative = 'O-',
   APositive = 'A+',
   ANegative = 'A-',
   BPositive = 'B+',

@@ -14,8 +14,8 @@ import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { SignIn } from "../../api";
 import { useAuth } from "../../context/AuthContext";
-import { useNavigate } from "react-router-dom";
-import { Alert, Fade } from "@mui/material";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Alert, Fade, Snackbar } from "@mui/material";
 import UserTypeSelector from "../UserTypeSelector";
 
 function Copyright(props) {
@@ -39,10 +39,27 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function SignInSide() {
+  const { state } = useLocation();
+  const [stateUserType, setStateUserType] = React.useState(null);
+  const [signUpSuccess, setSignUpSuccess] = React.useState(false);
+
+  React.useEffect(() => {
+    if (state) {
+      setStateUserType("patient");
+      setSignUpSuccess(true);
+    }
+  }, [state]);
   const { logIn } = useAuth();
   const navigate = useNavigate();
   const [error1, setError] = React.useState(false);
-  const [userType, setUserType] = React.useState(null);
+
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setSignUpSuccess(false);
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -51,7 +68,7 @@ export default function SignInSide() {
       const response = await SignIn({
         email: data.get("email"),
         password: data.get("password"),
-        type: userType,
+        type: stateUserType,
       });
       if (response) {
         logIn(response);
@@ -67,7 +84,7 @@ export default function SignInSide() {
   };
 
   const leftSide = () => {
-    if (userType) {
+    if (stateUserType) {
       return (
         <>
           <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
@@ -131,10 +148,23 @@ export default function SignInSide() {
             </Grid>
             <Copyright sx={{ mt: 5 }} />
           </Box>
+          <Snackbar
+            open={signUpSuccess}
+            autoHideDuration={2000}
+            onClose={handleSnackbarClose}
+          >
+            <Alert
+              onClose={handleSnackbarClose}
+              severity="success"
+              sx={{ width: "100%" }}
+            >
+              Successfully Signed Up.
+            </Alert>
+          </Snackbar>
         </>
       );
     }
-    return <UserTypeSelector setUserType={setUserType}></UserTypeSelector>;
+    return <UserTypeSelector setUserType={setStateUserType}></UserTypeSelector>;
   };
   return (
     <ThemeProvider theme={theme}>

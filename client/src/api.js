@@ -67,3 +67,10 @@ export const addNewPatientMedication = async (id, body) => {
   );
   return data;
 };
+
+export const getAllMedications = async () => {
+  const { data } = await axios.get(`${baseUrl}/medications`, {
+    withCredentials: true,
+  });
+  return data;
+};
