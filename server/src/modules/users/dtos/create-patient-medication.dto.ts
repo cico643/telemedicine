@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsISO8601, IsNotEmpty, IsNumber } from 'class-validator';
+import { IsISO8601, IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
 
 export class CreatePatientMedicationDto {
   @ApiProperty({ required: true })
@@ -14,7 +14,7 @@ export class CreatePatientMedicationDto {
 
   @ApiProperty({ required: true, nullable: true })
   @IsISO8601() // YYYY-MM-DD date format
-  @IsNotEmpty()
+  @IsOptional()
   endDate?: string;
 
   @ApiProperty({ required: true })
