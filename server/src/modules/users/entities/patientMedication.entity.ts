@@ -7,10 +7,10 @@ export class PatientMedication {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ type: 'date' })
   startDate: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'date', nullable: true })
   endDate?: string;
 
   @Column()

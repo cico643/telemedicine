@@ -226,6 +226,9 @@ export class UsersService {
     const patientMedication = await this.patientMedicationRepository.create({
       patient,
       medication,
+      dailyDosage: patientMedicationDto.dailyDosage,
+      startDate: patientMedicationDto.startDate,
+      endDate: patientMedicationDto.endDate,
     });
     await this.patientMedicationRepository.save(patientMedication);
     return patientMedication;
@@ -234,7 +237,6 @@ export class UsersService {
   public async getPatientMedications(id: number) {
     const patientMedications = await this.patientMedicationRepository.find({
       where: { patient: id },
-      relations: ['patient'],
     });
 
     return patientMedications;
