@@ -13,6 +13,9 @@ export class PatientMedication {
   @Column({ type: 'date' })
   endDate: string;
 
+  @Column({})
+  dailyDosage: number;
+
   @ManyToOne(() => Patient, (patient) => patient.patientMedications)
   patient: Patient;
 

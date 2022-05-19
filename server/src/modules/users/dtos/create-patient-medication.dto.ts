@@ -16,4 +16,9 @@ export class CreatePatientMedicationDto {
   @IsISO8601() // YYYY-MM-DD date format
   @IsNotEmpty()
   endDate: string;
+
+  @ApiProperty({ required: true })
+  @IsNumber()
+  @IsNotEmpty()
+  dailyDosage: number;
 }

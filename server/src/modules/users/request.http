@@ -71,15 +71,18 @@ GET http://localhost:5000/medications/1
 ### Delete medication by id
 DELETE http://localhost:5000/medications/1
 
-### Add new patient diagnose
+### Add new patient medication
 POST http://localhost:5000/users/1/patient-medications
 Content-Type: application/json
 
 {
-    "medicationId": 1
+    "medicationId": 1,
+    "startDate": "2010-05-05",
+    "endDate": "2010-06-05",
+    "dailyDosage": 10
 }
 
-### Get all diagnoses of a patient
+### Get all medications of a patient
 GET http://localhost:5000/users/1/patient-medications
 
 
