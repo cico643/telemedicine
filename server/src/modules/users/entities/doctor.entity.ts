@@ -24,7 +24,6 @@ export class Doctor extends User {
   department?: Department;
 
   @OneToMany(() => Appointment, (appointment) => appointment.doctor, {
-    eager: true,
     cascade: true,
     nullable: true,
   })

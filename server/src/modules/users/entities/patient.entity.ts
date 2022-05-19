@@ -38,14 +38,12 @@ export class Patient extends User {
   bloodType: BloodTypes;
 
   @OneToMany(() => Appointment, (appointment) => appointment.patient, {
-    eager: true,
     cascade: true,
     nullable: true,
   })
   appointments?: Appointment[];
 
   @OneToMany(() => Document, (document) => document.patient, {
-    eager: true,
     cascade: true,
     nullable: true,
   })
@@ -54,19 +52,18 @@ export class Patient extends User {
   @OneToMany(
     () => PatientDiagnose,
     (patientDiagnose) => patientDiagnose.patient,
-    { nullable: true, eager: true },
+    { nullable: true },
   )
   patientDiagnoses?: PatientDiagnose[];
 
   @OneToMany(
     () => PatientMedication,
     (patientMedication) => patientMedication.patient,
-    { eager: true, cascade: true, nullable: true },
+    { cascade: true, nullable: true },
   )
   patientMedications?: PatientMedication[];
 
   @OneToMany(() => Relative, (relative) => relative.patient, {
-    eager: true,
     cascade: true,
     nullable: true,
   })
