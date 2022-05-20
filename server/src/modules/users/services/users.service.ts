@@ -173,7 +173,6 @@ export class UsersService {
   public async getPatientDiagnoses(id: number) {
     const patientDiagnoses = await this.patientDiagnoseRepository.find({
       where: { patient: id },
-      relations: ['patient'],
     });
 
     return patientDiagnoses;
