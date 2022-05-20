@@ -26,6 +26,7 @@ export class PatientDiagnose {
   diagnose: Diagnose;
 
   @ManyToOne(() => Doctor, (doctor) => doctor.patientDiagnoses, {
+    eager: true,
     nullable: true,
   })
   doctor?: Doctor;
