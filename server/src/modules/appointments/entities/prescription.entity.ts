@@ -7,10 +7,7 @@ export class Prescription {
   id: number;
 
   @Column()
-  name: string;
-
-  @Column()
-  description: string;
+  content: string;
 
   @OneToOne(() => Appointment, (appointment) => appointment.prescription)
   appointment: Appointment;

@@ -3,11 +3,6 @@ import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class CreateHospitalDto {
   @ApiProperty({ required: true })
-  @IsNumber()
-  @IsNotEmpty()
-  id: number;
-
-  @ApiProperty({ required: true })
   @IsString()
   @IsNotEmpty()
   name: string;
@@ -15,5 +10,10 @@ export class CreateHospitalDto {
   @ApiProperty({ required: true })
   @IsString()
   @IsNotEmpty()
-  address: string;
+  province: string;
+
+  @ApiProperty({ required: true })
+  @IsString()
+  @IsNotEmpty()
+  district: string;
 }

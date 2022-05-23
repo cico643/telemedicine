@@ -1,10 +1,10 @@
 import { Appointment } from '../../appointments/entities/appointment.entity';
-import { Document } from '../../documents/document.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { PatientDiagnose } from './patientDiagnose.entity';
 import { PatientMedication } from './patientMedication.entity';
 import { Relative } from './relative.entity';
 import { User } from './user.entity';
+import { Document } from '../../../modules/appointments/entities/document.entity';
 
 export enum BloodTypes {
   OPositive = 'O+',
@@ -42,12 +42,6 @@ export class Patient extends User {
     nullable: true,
   })
   appointments?: Appointment[];
-
-  @OneToMany(() => Document, (document) => document.patient, {
-    cascade: true,
-    nullable: true,
-  })
-  documents?: Document[];
 
   @OneToMany(
     () => PatientDiagnose,

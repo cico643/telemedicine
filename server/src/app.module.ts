@@ -1,4 +1,5 @@
 import {
+  CacheModule,
   Logger,
   MiddlewareConsumer,
   Module,
@@ -10,12 +11,12 @@ import { DatabaseModule } from './providers/database/database.module';
 import { UsersModule } from './modules/users/users.module';
 import { HospitalsModule } from './modules/hospitals/hospitals.module';
 import { AppointmentsModule } from './modules/appointments/appointments.module';
-import { DocumentsModule } from './modules/documents/documents.module';
 import { RolesGuard } from './common/guards/role.guard';
 import LoggerMiddleware from './common/middlewares/logger.middleware';
 import { FilesModule } from './providers/s3/files.module';
 import { RedisModule } from './providers/redis/redis.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { CitiesController } from './cities.controller';
 
 @Module({
   imports: [
@@ -24,9 +25,11 @@ import { AuthModule } from './modules/auth/auth.module';
     AuthModule,
     HospitalsModule,
     AppointmentsModule,
-    DocumentsModule,
     FilesModule,
     RedisModule,
+    CacheModule.register({
+      ttl: 8 * 60 * 60,
+    }),
   ],
   providers: [
     {
@@ -41,6 +44,7 @@ import { AuthModule } from './modules/auth/auth.module';
     },
     Logger,
   ],
+  controllers: [CitiesController],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {

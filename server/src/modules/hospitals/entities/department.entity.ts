@@ -17,10 +17,12 @@ export class Department {
   name: string;
 
   @OneToMany(() => Doctor, (doctor) => doctor.department, {
-    eager: true,
+    cascade: ['insert'],
   })
   doctors: Doctor[];
 
-  @ManyToOne(() => Hospital, (hospital) => hospital.departments)
+  @ManyToOne(() => Hospital, (hospital) => hospital.departments, {
+    nullable: false,
+  })
   hospital: Hospital;
 }

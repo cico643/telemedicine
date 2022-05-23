@@ -1,4 +1,3 @@
-import { Document } from '../../documents/document.entity';
 import { Doctor } from '../../users/entities/doctor.entity';
 import { Patient } from '../../users/entities/patient.entity';
 import {
@@ -11,28 +10,30 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Prescription } from './prescription.entity';
+import { Document } from './document.entity';
 
 @Entity()
 export class Appointment {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  date: Date;
+  @Column({ type: 'date' })
+  date: string;
 
-  @Column()
-  startHour: Date;
+  @Column({ type: 'time' })
+  startHour: string;
 
-  @Column()
-  endHour: Date;
-
-  @Column()
+  @Column({ nullable: true })
   note: string;
 
-  @ManyToOne(() => Doctor, (doctor) => doctor.appointments)
+  @ManyToOne(() => Doctor, (doctor) => doctor.appointments, {
+    eager: true,
+  })
   doctor: Doctor;
 
-  @ManyToOne(() => Patient, (patient) => patient.appointments)
+  @ManyToOne(() => Patient, (patient) => patient.appointments, {
+    eager: true,
+  })
   patient: Patient;
 
   @JoinColumn()

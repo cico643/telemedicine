@@ -1,0 +1,50 @@
+####### HOSPITALS
+
+### Add a new hospital
+POST http://localhost:5000/hospitals/
+Content-Type: application/json
+
+{
+    "name": "Bursa Şehir Hastanesi",
+    "province": "Bursa",
+    "district": "Nilüfer"
+}
+
+### Get all hospitals
+GET http://localhost:5000/hospitals/
+
+### Get all hospitals in the given district
+GET http://localhost:5000/hospitals?district=Nilüfer
+
+
+### Get hospital by id
+GET http://localhost:5000/hospitals/1
+
+
+####### DEPARTMENTS
+
+### Add a new department
+POST http://localhost:5000/hospitals/1/departments/
+Content-Type: application/json
+
+{
+    "name": "Kardiyoloji"
+}
+
+### Get all departments for the given hospital 
+GET http://localhost:5000/hospitals/1/departments/
+
+
+### Get department by id
+GET http://localhost:5000/hospitals/2/departments/2
+
+### Add doctor to department
+POST http://localhost:5000/hospitals/2/departments/2/doctors
+Content-Type: application/json
+
+{
+    "doctorId": 1
+}
+
+### Get all doctors for the given department // Colleagues
+GET http://localhost:5000/hospitals/2/departments/2/doctors

@@ -1,0 +1,2 @@
+// Get All city district list
+GET http://localhost:5000/cities

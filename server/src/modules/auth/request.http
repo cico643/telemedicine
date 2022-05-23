@@ -12,7 +12,7 @@ Content-Type: application/json
     "height": 185,
     "weight": 80,
     "bloodType": "B+",
-    "type" : "patient"
+    "type" : "doctor"
 }
 
 ### Sign in as an existing user

@@ -1,0 +1,57 @@
+####### APPOINTMENTS
+
+### Add a new appointment
+POST http://localhost:5000/appointments/
+Content-Type: application/json
+
+{
+  "doctorId": 1,
+  "patientId": 1,
+  "date": "2020-05-05",
+  "startHour": "11:00"
+}
+
+### Get all appointments for the given user
+GET http://localhost:5000/appointments?type=doctor&id=1
+
+### Get specific appointment by id
+GET http://localhost:5000/appointments/1
+
+
+### Add note to appointment by the doctor of that appointment
+PUT http://localhost:5000/appointments/1
+Content-Type: application/json
+
+{
+  "note": "A check-up was performed on demand of the patient."
+}
+
+### Search for booked hours of the doctor on the given date
+GET http://localhost:5000/appointments/search?doctorId=1&date=2020-05-05
+
+###### PRESCRIPTIONS
+
+### Add new prescription
+POST http://localhost:5000/appointments/2/prescriptions
+Content-Type: application/json
+
+{
+  "content": "1. Tab. Crocin - 650 mg (Paracetamol) 1 - 1 - 1 * 3 Days, Take after food"
+}
+
+### Get specific prescription by its Id
+GET http://localhost:5000/appointments/1/prescriptions/1
+
+
+###### DOCUMENTS
+
+### Add new document
+POST http://localhost:5000/appointments/1/documents
+Content-Type: application/json
+
+{
+  "name": "EKG"
+}
+
+### Get all documents of the given appointment
+GET http://localhost:5000/appointments/1/documents

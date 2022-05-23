@@ -10,10 +10,13 @@ export class Hospital {
   name: string;
 
   @Column()
-  address: string;
+  province: string;
+
+  @Column()
+  district: string;
 
   @OneToMany(() => Department, (department) => department.hospital, {
-    eager: true,
+    cascade: true,
   })
   departments: Department[];
 }
