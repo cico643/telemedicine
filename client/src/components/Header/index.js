@@ -19,13 +19,13 @@ import Divider from "@mui/material/Divider";
 import PersonAdd from "@mui/icons-material/PersonAdd";
 import Settings from "@mui/icons-material/Settings";
 import Logout from "@mui/icons-material/Logout";
-import { SignOut } from "../../api";
+import { changeYourAvatar, deleteYourPreviousAvatar, SignOut } from "../../api";
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../../context/UserContext";
 
 function Header(props) {
-  const { user } = useUserContext();
-  const { onDrawerToggle, selectedId } = props;
+  const { user, setUser } = useUserContext();
+  const { onDrawerToggle, selectedId, setSelectedId } = props;
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -41,8 +41,58 @@ function Header(props) {
     navigate("/signIn");
   };
 
+  const handleChangeProfilePic = async ({ target }) => {
+    let data = new FormData();
+    data.append("file", target.files[0]);
+    if (user.avatar) {
+      await deleteYourPreviousAvatar();
+    }
+    const response = await changeYourAvatar(data);
+    setUser({ ...user, avatar: response });
+  };
+
+  const tabHelper = (l) => {
+    if (
+      l === "PatientSummary" ||
+      l === "PatientDiagnoses" ||
+      l === "PatientMedications" ||
+      l === "PatientVisits"
+    ) {
+      const componentArray = [
+        <Tab
+          label="Summary"
+          value="PatientSummary"
+          onClick={() => setSelectedId("PatientSummary")}
+        />,
+        <Tab
+          label="Diagnoses"
+          value="PatientDiagnoses"
+          onClick={() => setSelectedId("PatientDiagnoses")}
+        />,
+        <Tab
+          label="Medications"
+          value="PatientMedications"
+          onClick={() => setSelectedId("PatientMedications")}
+        />,
+        <Tab
+          label="Visits"
+          value="PatientVisits"
+          onClick={() => setSelectedId("PatientVisits")}
+        />,
+      ];
+      return componentArray;
+    }
+  };
+
   return (
     <React.Fragment>
+      <input
+        accept="image/*"
+        id="icon-button-file"
+        type="file"
+        style={{ display: "none" }}
+        onChange={handleChangeProfilePic}
+      />
       <AppBar color="primary" position="sticky" elevation={0}>
         <Toolbar>
           <Grid container spacing={1} alignItems="center">
@@ -82,7 +132,10 @@ function Header(props) {
                       aria-haspopup="true"
                       aria-expanded={open ? "true" : undefined}
                     >
-                      <Avatar sx={{ width: 32, height: 32 }}>M</Avatar>
+                      <Avatar
+                        sx={{ width: 32, height: 32 }}
+                        src={user.avatar?.url || ""}
+                      />
                     </IconButton>
                   </Tooltip>
                 </Box>
@@ -122,14 +175,23 @@ function Header(props) {
                   anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
                 >
                   <MenuItem>
-                    <Avatar /> {user.name + " " + user.surname}
+                    <Avatar
+                      sx={{ width: 32, height: 32 }}
+                      src={user.avatar?.url || ""}
+                    />
+                    {user.name + " " + user.surname}
                   </MenuItem>
                   <Divider />
                   <MenuItem>
-                    <ListItemIcon>
-                      <PersonAdd fontSize="small" />
-                    </ListItemIcon>
-                    Change Profile Picture
+                    <label
+                      htmlFor="icon-button-file"
+                      style={{ cursor: "pointer" }}
+                    >
+                      <ListItemIcon>
+                        <PersonAdd fontSize="small" />
+                      </ListItemIcon>
+                      Change Profile Picture
+                    </label>
                   </MenuItem>
                   <MenuItem>
                     <ListItemIcon>
@@ -172,8 +234,8 @@ function Header(props) {
         elevation={0}
         sx={{ zIndex: 0 }}
       >
-        <Tabs value={0} textColor="inherit">
-          <Tab label="Summary" />
+        <Tabs value={selectedId} textColor="inherit">
+          {tabHelper(selectedId)}
         </Tabs>
       </AppBar>
     </React.Fragment>

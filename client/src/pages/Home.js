@@ -14,6 +14,15 @@ import { useUserContext } from "../context/UserContext";
 import { CircularProgress } from "@mui/material";
 import Medications from "../components/Medications";
 import Relatives from "../components/Relatives";
+import Diagnoses from "../components/Diagnoses";
+import Summary from "../components/Summary";
+import Appointment from "../components/Appointment/Appointment";
+import PatientSummary from "../components/Doctor/PatientSummary";
+import Patients from "../components/Doctor/Patients";
+import PatientDiagnoses from "../components/Doctor/PatientDiagnoses";
+import PatientMedications from "../components/Doctor/PatientMedications";
+import PatientVisits from "../components/Doctor/PatientVisits";
+import Visits from "../components/Visits";
 
 function Copyright() {
   return (
@@ -173,6 +182,7 @@ theme = {
 const drawerWidth = 256;
 
 export default function Paperbase() {
+  const [selectedPatientId, setSelectedPatientId] = React.useState("");
   const [selectedId, setSelectedId] = React.useState("Summary");
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [isLoading, setLoading] = React.useState(true);
@@ -189,6 +199,43 @@ export default function Paperbase() {
         return <Medications></Medications>;
       case "Relatives":
         return <Relatives></Relatives>;
+      case "Diagnoses":
+        return <Diagnoses></Diagnoses>;
+      case "Summary":
+        return <Summary></Summary>;
+      case "Appointment":
+        return <Appointment></Appointment>;
+      case "Visits":
+        return <Visits></Visits>;
+      case "PatientSummary":
+        return (
+          <PatientSummary
+            selectedPatientId={selectedPatientId}
+          ></PatientSummary>
+        );
+      case "PatientDiagnoses":
+        return (
+          <PatientDiagnoses
+            selectedPatientId={selectedPatientId}
+          ></PatientDiagnoses>
+        );
+      case "PatientMedications":
+        return (
+          <PatientMedications
+            selectedPatientId={selectedPatientId}
+          ></PatientMedications>
+        );
+      case "PatientVisits":
+        return (
+          <PatientVisits selectedPatientId={selectedPatientId}></PatientVisits>
+        );
+      case "Patients":
+        return (
+          <Patients
+            setSelectedId={setSelectedId}
+            setSelectedPatientId={setSelectedPatientId}
+          ></Patients>
+        );
       default:
         return <Content></Content>;
     }
@@ -230,11 +277,26 @@ export default function Paperbase() {
             sx={{ display: { sm: "block", xs: "none" } }}
           />
         </Box>
-        <Box sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
-          <Header selectedId={selectedId} onDrawerToggle={handleDrawerToggle} />
+        <Box
+          sx={{
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <Header
+            selectedId={selectedId}
+            setSelectedId={setSelectedId}
+            onDrawerToggle={handleDrawerToggle}
+          />
           <Box
             component="main"
-            sx={{ flex: 1, py: 6, px: 4, bgcolor: "#eaeff1" }}
+            sx={{
+              flex: 1,
+              py: 6,
+              px: 4,
+              bgcolor: "#eaeff1",
+            }}
           >
             {whichContent()}
           </Box>

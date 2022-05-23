@@ -18,43 +18,66 @@ import MenuItem from "@mui/material/MenuItem";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import Select from "@mui/material/Select";
 import {
-  addNewPatientMedication,
-  getSpecificUserMedications,
-  getAllMedications,
+  addNewPatientDiagnose,
+  getAllDiagnoses,
+  getSpecificUserDiagnoses,
 } from "../../api";
 
-export default function Medications(props) {
+export default function Diagnoses(props) {
   const [isLoading, setIsLoading] = React.useState(true);
   const [openModal, setOpenModal] = React.useState(false);
   const handleModalOpen = () => setOpenModal(true);
   const handleModalClose = () => setOpenModal(false);
+  const [isApproveButton, setIsApproveButton] = React.useState(false);
 
-  const [allMedications, setAllMedications] = React.useState([]);
+  const [allDiagnoses, setAllDiagnoses] = React.useState([]);
 
-  const [newMedication, setNewMedication] = React.useState("Aferin+");
+  const [newDiagnose, setNewDiagnose] = React.useState("cancer");
   const [startDate, setStartDate] = React.useState(new Date());
-  const [endDate, setEndDate] = React.useState(new Date());
 
-  const columns = ["Medication Name", "Daily Dosage", "Start Date", "End Date"];
-  const { user, medications, setMedications } = useUserContext();
+  const columns = [
+    "Diagnose Name",
+    "Start Date",
+    {
+      name: "Approval Status",
+      options: {
+        customBodyRender: (value, tableMeta, updateValue) => {
+          return value ? (
+            <CheckCircleIcon sx={{ marginLeft: "40px" }} color="success" />
+          ) : (
+            <CheckCircleIcon sx={{ marginLeft: "40px" }} color="disabled" />
+          );
+        },
+      },
+    },
+    "Approved By",
+  ];
+  const { user, diagnoses, setDiagnoses } = useUserContext();
   const { selectedPatientId } = props;
   let patientId = user.id;
   if (selectedPatientId) {
     patientId = selectedPatientId;
   }
-
   React.useEffect(() => {
-    getSpecificUserMedications(patientId).then((response) => {
-      setMedications(
+    setIsLoading(true);
+    getSpecificUserDiagnoses(patientId).then((response) => {
+      setDiagnoses(
         response.map(({ id, ...rest }) => {
-          const medicationName = rest.medication.name;
-          delete rest.medication;
-          rest["medicationName"] = medicationName;
-          if (rest["endDate"] === null) {
-            rest["endDate"] = "-";
+          ////////////TODO: GOTO DOCTOR PROFILE ON CLICK
+          if (rest.doctor) {
+            const doctorId = rest.doctor.name;
+            delete rest.doctor;
+            rest["doctorId"] = doctorId;
+          } else {
+            delete rest.doctor;
+            rest["doctorId"] = "-";
           }
+          const diagnoseName = rest.diagnose.name;
+          delete rest.diagnose;
+          rest["diagnoseName"] = diagnoseName;
           const data = Object.values(rest);
           const lastItem = data.pop();
           data.unshift(lastItem);
@@ -62,56 +85,69 @@ export default function Medications(props) {
         })
       );
     });
-    getAllMedications().then((response) => {
-      setAllMedications(response);
+    getAllDiagnoses().then((response) => {
+      setAllDiagnoses(response);
     });
     setTimeout(() => {
       setIsLoading(false);
     }, 300);
-  }, [setMedications, patientId]);
+  }, [setDiagnoses, patientId]);
 
-  const medicationMenuItems = (medications) => {
-    return medications.map((medication) => {
+  const diagnosesMenuItems = (diagnoses) => {
+    return diagnoses.map((diagnose) => {
       return (
-        <MenuItem key={medication.id} value={medication.id}>
-          {medication.name}
+        <MenuItem key={diagnose.id} value={diagnose.id}>
+          {diagnose.name}
         </MenuItem>
       );
     });
   };
 
-  const handleMedicationChange = (event) => {
-    setNewMedication(event.target.value);
+  const handleDiagnoseChange = (event) => {
+    setNewDiagnose(event.target.value);
   };
 
-  const handleAddPatientMedication = async (event) => {
+  const handleAddPatientDiagnose = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    const response = await addNewPatientMedication(patientId, {
-      medicationId: Number(data.get("medicationId")),
+    const response = await addNewPatientDiagnose(patientId, {
+      diagnoseId: Number(data.get("diagnoseId")),
       startDate: startDate.toISOString().split("T")[0],
-      endDate: endDate.toISOString().split("T")[0],
-      dailyDosage: Number(data.get("dailyDosage")),
     });
     if (response) {
+      ////////////TODO: GOTO DOCTOR PROFILE ON CLICK
+
+      response["doctorId"] = "-";
+
       delete response.patient;
       delete response.id;
-      const medicationName = response.medication.name;
-      delete response.medication;
-      response["medicationName"] = medicationName;
-      if (response["endDate"] === null) {
-        response["endDate"] = "-";
-      }
+      const diagnoseName = response.diagnose.name;
+      delete response.diagnose;
+      response["diagnoseName"] = diagnoseName;
       const data = Object.values(response);
       const lastItem = data.pop();
       data.unshift(lastItem);
-      setMedications([...medications, data]);
+      setDiagnoses([...diagnoses, data]);
       handleModalClose();
     }
   };
 
   const options = {
     filterType: "checkbox",
+    showResponsive: true,
+    onRowSelectionChange: (
+      currentRowsSelected,
+      AllRowsSelected,
+      rowsSelected
+    ) => {
+      console.log(AllRowsSelected);
+      if (rowsSelected.length === 0) {
+        setIsApproveButton(false);
+      } else {
+        setIsApproveButton(true);
+      }
+    },
+    selectableRows: "single",
   };
 
   return isLoading ? (
@@ -138,24 +174,24 @@ export default function Medications(props) {
           sx={{ position: "right" }}
           variant="contained"
         >
-          Add New Medication
+          Add New Diagnose
         </Button>
       </div>
       <MUIDataTable
-        title={"Medications"}
-        data={medications}
+        title={"Diagnoses"}
+        data={diagnoses}
         columns={columns}
         options={options}
       />
       <Dialog open={openModal} onClose={handleModalClose}>
-        <DialogTitle>Add New Medications</DialogTitle>
+        <DialogTitle>Add New Diagnose</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Add the medications that you use for doctors to see.
+            Add the diagnoses that you use for doctors to see.
           </DialogContentText>
           <Box
             component="form"
-            onSubmit={handleAddPatientMedication}
+            onSubmit={handleAddPatientDiagnose}
             noValidate
             sx={{ paddingTop: "10px" }}
           >
@@ -169,37 +205,18 @@ export default function Medications(props) {
                 }}
                 renderInput={(params) => <TextField {...params} />}
               />
-              <DatePicker
-                label="End Date"
-                inputFormat="dd/MM/yyyy"
-                value={endDate}
-                onChange={(newValue) => {
-                  setEndDate(newValue);
-                }}
-                renderInput={(params) => <TextField {...params} />}
-              />
             </LocalizationProvider>
-            <TextField
-              autoFocus
-              margin="dense"
-              id="dailyDosage"
-              name="dailyDosage"
-              label="Daily Dosage"
-              type="number"
-              fullWidth
-              variant="standard"
-            />
             <FormControl fullWidth sx={{ marginTop: "10px" }}>
-              <InputLabel id="relation-select-label">Medication</InputLabel>
+              <InputLabel id="relation-select-label">Diagnose</InputLabel>
               <Select
                 labelId="relation-select-label"
-                id="medicationId"
-                name="medicationId"
-                value={newMedication}
-                label="Relation"
-                onChange={handleMedicationChange}
+                id="diagnoseId"
+                name="diagnoseId"
+                value={newDiagnose}
+                label="Diagnose"
+                onChange={handleDiagnoseChange}
               >
-                {medicationMenuItems(allMedications)}
+                {diagnosesMenuItems(allDiagnoses)}
               </Select>
             </FormControl>
             <Button onClick={handleModalClose}>Cancel</Button>
@@ -207,6 +224,9 @@ export default function Medications(props) {
           </Box>
         </DialogContent>
       </Dialog>
+      <Button sx={{ display: `${isApproveButton ? "block" : "none"}` }}>
+        Approve
+      </Button>
     </>
   );
 }

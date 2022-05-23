@@ -15,8 +15,9 @@ import SickIcon from "@mui/icons-material/Sick";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import MonitorHeartIcon from "@mui/icons-material/MonitorHeart";
 import CallIcon from "@mui/icons-material/Call";
+import { useAuth } from "../../context/AuthContext";
 
-const categories = [
+const patientCategories = [
   {
     id: "Profile",
     children: [
@@ -28,6 +29,28 @@ const categories = [
       { id: "Diagnoses", icon: <SickIcon /> },
       { id: "Visits", icon: <CalendarTodayIcon /> },
       { id: "Relatives", icon: <PeopleIcon /> },
+    ],
+  },
+  {
+    id: "Actions",
+    children: [
+      { id: "Appointment", icon: <CalendarTodayIcon /> },
+      { id: "Informing Relatives", icon: <CallIcon /> },
+      { id: "Sensor Data", icon: <MonitorHeartIcon /> },
+    ],
+  },
+];
+const doctorCategories = [
+  {
+    id: "Profile",
+    children: [
+      {
+        id: "Summary",
+        icon: <AccountBoxIcon />,
+      },
+      { id: "Patients", icon: <PeopleIcon /> },
+      { id: "Colleagues", icon: <SickIcon /> },
+      { id: "Appointments", icon: <CalendarTodayIcon /> },
     ],
   },
   {
@@ -57,6 +80,11 @@ const itemCategory = {
 
 export default function Navigator(props) {
   const { setSelectedId, selectedId, ...other } = props;
+  const { user } = useAuth();
+  let categories = patientCategories;
+  if (user.type === "doctor") {
+    categories = doctorCategories;
+  }
 
   const activeNavItem = (id) => {
     setSelectedId(id);
