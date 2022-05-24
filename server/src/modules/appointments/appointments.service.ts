@@ -58,7 +58,10 @@ export class AppointmentsService {
               patient: id,
             },
           };
-    const appointments = await this.appointmentsRepository.find(findOptions);
+    const appointments = await this.appointmentsRepository.find({
+      ...findOptions,
+      order: { date: 'DESC' },
+    });
     return appointments;
   }
 
