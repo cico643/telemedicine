@@ -196,11 +196,10 @@ export class AppointmentsService {
       .getRawMany()) as any;
     const returnVal = result.map((e) => {
       return {
-        id: e.patient_id,
-        phoneNumber: e.patient_phoneNumber,
         name: e.patient_name,
         surname: e.patient_surname,
-        bloodType: e.patient_bloodType,
+        phoneNumber: e.patient_phoneNumber,
+        id: e.patient_id,
       };
     });
     return returnVal;
