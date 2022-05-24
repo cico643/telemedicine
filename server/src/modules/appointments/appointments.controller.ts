@@ -79,6 +79,26 @@ export class AppointmentsController {
     }
   }
 
+  @Get('/search/patients?')
+  @HttpCode(200)
+  async searchForPatientsOfDoctor(
+    @Query('doctorId', ParseIntPipe) doctorId: number,
+  ) {
+    try {
+      const patients =
+        await this.appointmentsService.searchForPatientsOfDoctor(
+          doctorId,
+        );
+      this.logger.log(
+        `Fetched all patients of the doctor [doctorId: ${doctorId}]`,
+        AppointmentsController.name,
+      );
+      return patients;
+    } catch (err) {
+      return genericErrorHandler(err);
+    }
+  }
+
   @Get('?')
   @HttpCode(200)
   async getAppointmentsOfGivenUser(

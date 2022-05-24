@@ -181,4 +181,25 @@ export class AppointmentsService {
       .getMany();
     return result.map((e) => e.startHour);
   }
+
+  async searchForPatientsOfDoctor(doctorId: number) {
+    const result = (await this.appointmentsRepository
+      .createQueryBuilder('appointment')
+      .leftJoinAndSelect('appointment.patient', 'patient')
+      .leftJoinAndSelect('appointment.doctor', 'doctor')
+      .where('doctor.id = :doctorId', { doctorId })
+      .select('patient')
+      .distinct(true)
+      .getRawMany()) as any;
+    const returnVal = result.map((e) => {
+      return {
+        id: e.patient_id,
+        phoneNumber: e.patient_phoneNumber,
+        name: e.patient_name,
+        surname: e.patient_surname,
+        bloodType: e.patient_bloodType,
+      };
+    });
+    return returnVal;
+  }
 }
