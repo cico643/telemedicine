@@ -64,12 +64,18 @@ export class HospitalsController {
 
   @Get('?')
   @HttpCode(200)
-  async getHospitalsForGivenDistrict(@Query('district') district: string) {
+  async getHospitalsForGivenCityDistrict(
+    @Query('province') province: string,
+    @Query('district') district: string,
+  ) {
     try {
       const hospitals =
-        await this.hospitalsService.getHospitalsForGivenDistrict(district);
+        await this.hospitalsService.getHospitalsForGivenCityDistrict(
+          province,
+          district,
+        );
       this.logger.log(
-        `Fetched all hospitals in district ${district}] `,
+        `Fetched all hospitals in [${province} - ${district}] `,
         HospitalsController.name,
       );
       return hospitals;
