@@ -12,7 +12,7 @@ Content-Type: application/json
 }
 
 ### Get all appointments for the given user
-GET http://localhost:5000/appointments?type=doctor&id=1
+GET http://localhost:5000/appointments/search?type=doctor&id=1
 
 ### Get specific appointment by id
 GET http://localhost:5000/appointments/1
@@ -27,7 +27,7 @@ Content-Type: application/json
 }
 
 ### Search for booked hours of the doctor on the given date
-GET http://localhost:5000/appointments/search?doctorId=1&date=2020-05-05
+GET http://localhost:5000/appointments/search/doctor?doctorId=1&date=2020-05-05
 
 ### Search for all patients of the given doctor
 GET http://localhost:5000/appointments/search/patient?doctorId=1

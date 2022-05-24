@@ -57,7 +57,26 @@ export class AppointmentsController {
     }
   }
 
-  @Get('/search?')
+  @Get('/search/patients?')
+  @HttpCode(200)
+  async searchForPatientsOfDoctor(
+    @Query('doctorId', ParseIntPipe) doctorId: number,
+  ) {
+    try {
+      const patients = await this.appointmentsService.searchForPatientsOfDoctor(
+        doctorId,
+      );
+      this.logger.log(
+        `Fetched all patients of the doctor [doctorId: ${doctorId}]`,
+        AppointmentsController.name,
+      );
+      return patients;
+    } catch (err) {
+      return genericErrorHandler(err);
+    }
+  }
+
+  @Get('/search/doctor?')
   @HttpCode(200)
   async searchForBookedHoursOfDoctor(
     @Query('doctorId', ParseIntPipe) doctorId: number,
@@ -79,27 +98,7 @@ export class AppointmentsController {
     }
   }
 
-  @Get('/search/patients?')
-  @HttpCode(200)
-  async searchForPatientsOfDoctor(
-    @Query('doctorId', ParseIntPipe) doctorId: number,
-  ) {
-    try {
-      const patients =
-        await this.appointmentsService.searchForPatientsOfDoctor(
-          doctorId,
-        );
-      this.logger.log(
-        `Fetched all patients of the doctor [doctorId: ${doctorId}]`,
-        AppointmentsController.name,
-      );
-      return patients;
-    } catch (err) {
-      return genericErrorHandler(err);
-    }
-  }
-
-  @Get('?')
+  @Get('/search?')
   @HttpCode(200)
   async getAppointmentsOfGivenUser(
     @Query('type') type: string,
