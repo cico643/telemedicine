@@ -156,16 +156,31 @@ export class UsersService {
   public async addPatientDiagnose(
     patientDiagnoseDto: CreatePatientDiagnoseDto,
     id: number,
+    type: string,
+    creatorId: number,
   ) {
     const diagnose = await this.diagnosesService.getDiagnoseById(
       patientDiagnoseDto.diagnoseId,
     );
+    let createOptions = {};
+
     const patient = await this.findById(id, this.patientsRepository);
-    const patientDiagnose = await this.patientDiagnoseRepository.create({
-      startDate: patientDiagnoseDto.startDate,
-      patient,
-      diagnose,
-    });
+    if (type === 'doctor') {
+      const doctor = await this.findById(creatorId, this.doctorsRepository);
+      createOptions['startDate'] = patientDiagnoseDto.startDate;
+      createOptions['patient'] = patient;
+      createOptions['diagnose'] = diagnose;
+      createOptions['patient'] = patient;
+      createOptions['approved'] = true;
+      createOptions['doctor'] = doctor;
+    } else {
+      createOptions['startDate'] = patientDiagnoseDto.startDate;
+      createOptions['patient'] = patient;
+      createOptions['diagnose'] = diagnose;
+    }
+    const patientDiagnose = await this.patientDiagnoseRepository.create(
+      createOptions,
+    );
     await this.patientDiagnoseRepository.save(patientDiagnose);
     return patientDiagnose;
   }

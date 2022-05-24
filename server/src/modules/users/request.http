@@ -11,7 +11,7 @@ POST http://localhost:5000/diagnoses
 Content-Type: application/json
 
 {
-    "name": "cancer"
+    "name": "Epilepsy"
 }
 
 ### Get all diagnoses
@@ -25,12 +25,12 @@ GET http://localhost:5000/diagnoses/1
 DELETE http://localhost:5000/diagnoses/3
 
 ### Add new patient diagnose
-POST http://localhost:5000/users/1/patient-diagnoses
+POST http://localhost:5000/users/1/patient-diagnoses?type=doctor
 Content-Type: application/json
 
 {
-    "diagnoseId": 1,
-    "startDate": "2015-05-05"
+    "diagnoseId": 3,
+    "startDate": "2020-05-05"
 }
 
 ### Get all diagnoses of a patient
@@ -58,7 +58,7 @@ POST http://localhost:5000/medications
 Content-Type: application/json
 
 {
-    "name": "painkiller"
+    "name": "Otrivine"
 }
 
 ### Get all medications

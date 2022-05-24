@@ -90,16 +90,20 @@ export class UsersController {
     }
   }
 
-  @Post('/:userId/patient-diagnoses')
+  @Post('/:userId/patient-diagnoses?')
   @HttpCode(201)
   async addPatientDiagnose(
     @Body() body: CreatePatientDiagnoseDto,
     @Param('userId', ParseIntPipe) userId: number,
+    @Query('type') type: string,
+    @Session() session: SessionType,
   ) {
     try {
       const patientDiagnose = await this.usersService.addPatientDiagnose(
         body,
         userId,
+        type,
+        session.context.id,
       );
 
       this.logger.log(
