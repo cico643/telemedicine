@@ -3,18 +3,34 @@ import {
   AccordionDetails,
   AccordionSummary,
   Backdrop,
+  Box,
+  Button,
   CircularProgress,
+  Dialog,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   Divider,
+  IconButton,
   Tab,
   Tabs,
+  TextField,
   Typography,
 } from "@mui/material";
+import AddBoxIcon from "@mui/icons-material/AddBox";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import React from "react";
 import { useUserContext } from "../../context/UserContext";
-import { getSpecificUserVisits } from "../../api";
+import {
+  addDocumentName,
+  addDocumentToAppointment,
+  addPrescription,
+  getSpecificUserVisits,
+} from "../../api";
 
 export default function Visits(props) {
+  const [selectedAppointment, setSelectedAppointment] = React.useState("");
+  const [open, setOpen] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(true);
   const [allVisits, setAllVisits] = React.useState([]);
   const { user } = useUserContext();
@@ -29,6 +45,41 @@ export default function Visits(props) {
 
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue);
+  };
+
+  const handleAddDocument = async ({ target }) => {
+    let data = new FormData();
+    data.append("file", target.files[0]);
+    const response = await addDocumentName(
+      { name: target.files[0].name },
+      Number(target.id.charAt(target.id.length - 1))
+    );
+    await addDocumentToAppointment(
+      data,
+      Number(target.id.charAt(target.id.length - 1)),
+      response.id
+    );
+    await getSpecificUserVisits(userType, patientId).then((response) => {
+      setAllVisits(response);
+    });
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleAddPrescription = async (e) => {
+    e.preventDefault();
+    console.log(e.currentTarget);
+    const data = new FormData(e.currentTarget);
+    await addPrescription(
+      { content: data.get("prescription") },
+      selectedAppointment
+    );
+    setOpen(false);
+    await getSpecificUserVisits(userType, patientId).then((response) => {
+      setAllVisits(response);
+    });
   };
 
   const todaysVisitsHelper = () => {
@@ -54,12 +105,43 @@ export default function Visits(props) {
               <Divider></Divider>
               <Typography>
                 Documents:{" "}
-                {visit.documents.map((document) => (
-                  <link src={document.images.url}>{document.name}</link>
-                ))}
+                {visit.documents.map((document) => {
+                  return (
+                    <a href={document.image?.url || ""}>{document.name}</a>
+                  );
+                })}
+                <label
+                  htmlFor={`document-button-file${visit.id}`}
+                  style={{ cursor: "pointer" }}
+                >
+                  <IconButton color="primary" component="span">
+                    <AddBoxIcon fontSize="small" />
+                  </IconButton>
+                  <input
+                    accept="image/*"
+                    id={`document-button-file${visit.id}`}
+                    type="file"
+                    style={{ display: "none" }}
+                    onChange={handleAddDocument}
+                  />
+                </label>
               </Typography>
               <Typography>
-                Prescription: {visit.prescription?.content}
+                Prescription:{" "}
+                {visit.prescription?.content || (
+                  <IconButton
+                    onClick={(e) => {
+                      setSelectedAppointment(visit.id);
+
+                      setOpen(true);
+                    }}
+                    id={`prescription${visit.id}`}
+                    color="primary"
+                    component="span"
+                  >
+                    <AddBoxIcon fontSize="small" />
+                  </IconButton>
+                )}
               </Typography>
             </AccordionDetails>
           </Accordion>
@@ -91,7 +173,7 @@ export default function Visits(props) {
               <Typography>
                 Documents:{" "}
                 {visit.documents.map((document) => (
-                  <link src={document.images.url}>{document.name}</link>
+                  <a href={document.image?.url || ""}>{document.name}</a>
                 ))}
               </Typography>
               <Typography>
@@ -127,7 +209,7 @@ export default function Visits(props) {
               <Typography>
                 Documents:{" "}
                 {visit.documents.map((document) => (
-                  <link src={document.images.url}>{document.name}</link>
+                  <a href={document.image?.url || ""}>{document.name}</a>
                 ))}
               </Typography>
               <Typography>
@@ -142,11 +224,7 @@ export default function Visits(props) {
   React.useEffect(() => {
     setIsLoading(true);
     getSpecificUserVisits(userType, patientId).then((response) => {
-      setAllVisits(
-        response.map(({ id, ...rest }) => {
-          return rest;
-        })
-      );
+      setAllVisits(response);
     });
     setTimeout(() => {
       setIsLoading(false);
@@ -172,9 +250,35 @@ export default function Visits(props) {
         <Tab label="Future Visits" />
         <Tab label="Past Visits" />
       </Tabs>
+
       <div hidden={selectedTab !== 0}>{todaysVisitsHelper()}</div>
       <div hidden={selectedTab !== 1}>{futureVisitsHelper()}</div>
       <div hidden={selectedTab !== 2}>{pastVisitsHelper()}</div>
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>Prescription</DialogTitle>
+        <DialogContent>
+          <DialogContentText>Write a Prescription</DialogContentText>
+          <Box
+            component="form"
+            onSubmit={handleAddPrescription}
+            noValidate
+            sx={{ paddingTop: "10px" }}
+          >
+            <TextField
+              autoFocus
+              margin="dense"
+              id="prescription"
+              name="prescription"
+              label="Prescription"
+              type="text"
+              fullWidth
+              variant="standard"
+            />
+            <Button onClick={handleClose}>Cancel</Button>
+            <Button type="submit">Submit</Button>
+          </Box>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

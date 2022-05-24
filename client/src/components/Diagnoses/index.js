@@ -37,7 +37,7 @@ export default function Diagnoses(props) {
 
   const [allDiagnoses, setAllDiagnoses] = React.useState([]);
 
-  const [newDiagnose, setNewDiagnose] = React.useState("cancer");
+  const [newDiagnose, setNewDiagnose] = React.useState("");
   const [startDate, setStartDate] = React.useState(new Date());
 
   const columns = [
@@ -90,16 +90,19 @@ export default function Diagnoses(props) {
     setNewDiagnose(event.target.value);
   };
 
-  ///////////// TODO: Doctor id
   const handleAddPatientDiagnose = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    const response = await addNewPatientDiagnose(patientId, {
-      diagnoseId: Number(data.get("diagnoseId")),
-      startDate: startDate.toISOString().split("T")[0],
-    });
+    const response = await addNewPatientDiagnose(
+      patientId,
+      {
+        diagnoseId: Number(data.get("diagnoseId")),
+        startDate: startDate.toISOString().split("T")[0],
+      },
+      user.type
+    );
     if (response) {
-      ////////////TODO: GOTO DOCTOR PROFILE ON CLICK
+      delete response.patient;
       setDiagnoses([...diagnoses, response]);
       handleModalClose();
     }

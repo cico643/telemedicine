@@ -90,9 +90,9 @@ export const getSpecificUserDiagnoses = async (id) => {
   return data;
 };
 
-export const addNewPatientDiagnose = async (id, body) => {
+export const addNewPatientDiagnose = async (id, body, type) => {
   const { data } = await axios.post(
-    `${baseUrl}/users/${id}/patient-diagnoses`,
+    `${baseUrl}/users/${id}/patient-diagnoses?type=${type}`,
     body,
     {
       withCredentials: true,
@@ -224,6 +224,37 @@ export const approveDiagnose = async (patientId, diagnoseId) => {
   const { data } = await axios.put(
     `${baseUrl}/users/${patientId}/patient-diagnoses/${diagnoseId}/approval-status`,
     {},
+    { withCredentials: true }
+  );
+  return data;
+};
+
+export const addDocumentName = async (body, appointmentId) => {
+  const { data } = await axios.post(
+    `${baseUrl}/appointments/${appointmentId}/documents`,
+    body,
+    { withCredentials: true }
+  );
+  return data;
+};
+
+export const addDocumentToAppointment = async (
+  body,
+  appointmentId,
+  documentId
+) => {
+  const { data } = await axios.put(
+    `${baseUrl}/appointments/${appointmentId}/documents/${documentId}`,
+    body,
+    { withCredentials: true }
+  );
+  return data;
+};
+
+export const addPrescription = async (body, appointmentId) => {
+  const { data } = await axios.post(
+    `${baseUrl}/appointments/${appointmentId}/prescriptions`,
+    body,
     { withCredentials: true }
   );
   return data;
