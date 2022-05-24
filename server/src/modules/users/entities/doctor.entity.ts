@@ -20,6 +20,7 @@ export class Doctor extends User {
 
   @ManyToOne(() => Department, (department) => department.doctors, {
     nullable: true,
+    eager: true,
   })
   department?: Department;
 
