@@ -92,7 +92,6 @@ export class UsersController {
 
   @Post('/:userId/patient-diagnoses')
   @HttpCode(201)
-  @Roles(UserRole.Patient)
   async addPatientDiagnose(
     @Body() body: CreatePatientDiagnoseDto,
     @Param('userId', ParseIntPipe) userId: number,
