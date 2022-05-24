@@ -39,7 +39,10 @@ export class HospitalsService {
 
   async getHospitalsForGivenCityDistrict(province: string, district: string) {
     const hospitals = await this.hospitalsRepository.find({
-      where: { province, district },
+      where: {
+        province,
+        district,
+      },
     });
     return hospitals;
   }

@@ -62,7 +62,7 @@ export class HospitalsController {
     }
   }
 
-  @Get('?')
+  @Get('/search?')
   @HttpCode(200)
   async getHospitalsForGivenCityDistrict(
     @Query('province') province: string,

@@ -14,7 +14,7 @@ Content-Type: application/json
 GET http://localhost:5000/hospitals/
 
 ### Get all hospitals in the given province & district
-GET http://localhost:5000/hospitals?province=Bursa&district=Nilüfer
+GET http://localhost:5000/hospitals/search?province=Bursa&district=Nilüfer
 
 
 ### Get hospital by id
