@@ -23,6 +23,7 @@ export class Department {
 
   @ManyToOne(() => Hospital, (hospital) => hospital.departments, {
     nullable: false,
+    eager: true,
   })
   hospital: Hospital;
 }
