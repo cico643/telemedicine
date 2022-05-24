@@ -128,3 +128,103 @@ export const deleteYourPreviousAvatar = async () => {
   });
   return data;
 };
+
+//////////// Book an Appointment
+export const getAllCitiesAndDistricts = async () => {
+  const { data } = await axios.get(`${baseUrl}/cities`, {
+    withCredentials: true,
+  });
+  return data;
+};
+
+export const getAllHospitalsByProvinceAndDistrict = async (
+  province,
+  district
+) => {
+  const { data } = await axios.get(
+    `${baseUrl}/hospitals/search?province=${province}&district=${district}`,
+    {
+      withCredentials: true,
+    }
+  );
+  return data;
+};
+
+export const getAllClinicsByHospitalId = async (hospitalId) => {
+  const { data } = await axios.get(
+    `${baseUrl}/hospitals/${hospitalId}/departments`,
+    {
+      withCredentials: true,
+    }
+  );
+  return data;
+};
+
+export const getAllDoctorsByHospitalIdAndClinicId = async (
+  hospitalId,
+  clinicId
+) => {
+  const { data } = await axios.get(
+    `${baseUrl}/hospitals/${hospitalId}/departments/${clinicId}/doctors`,
+    {
+      withCredentials: true,
+    }
+  );
+  return data;
+};
+
+export const searchBookedHours = async (doctorId, date) => {
+  const { data } = await axios.get(
+    `${baseUrl}/appointments/search/doctor?doctorId=${doctorId}&date=${date}`,
+    {
+      withCredentials: true,
+    }
+  );
+  return data.map((hour) => {
+    return hour.slice(0, -3);
+  });
+};
+
+export const addNewAppointment = async (body) => {
+  const { data } = await axios.post(`${baseUrl}/appointments/`, body, {
+    withCredentials: true,
+  });
+  return data;
+};
+
+export const getSpecificUserVisits = async (userType, userId) => {
+  const { data } = await axios.get(
+    `${baseUrl}/appointments/search?type=${userType}&id=${userId}`,
+    { withCredentials: true }
+  );
+  return data;
+};
+
+/////////////// Doctor Patients
+export const getSpecificDoctorPatients = async (doctorId) => {
+  const { data } = await axios.get(
+    `${baseUrl}/appointments/search/patient?doctorId=${doctorId}`,
+    { withCredentials: true }
+  );
+  return data;
+};
+
+/////////////// Doctor colleagues
+export const getSpecificDoctorColleagues = async (hospitalId, departmentId) => {
+  const { data } = await axios.get(
+    `${baseUrl}/hospitals/${hospitalId}/departments/${departmentId}/doctors`,
+    { withCredentials: true }
+  );
+  return data;
+};
+
+///////////// Doctor Approve diagnose
+
+export const approveDiagnose = async (patientId, diagnoseId) => {
+  const { data } = await axios.put(
+    `${baseUrl}/users/${patientId}/patient-diagnoses/${diagnoseId}/approval-status`,
+    {},
+    { withCredentials: true }
+  );
+  return data;
+};

@@ -3,7 +3,6 @@ import {
   AccordionDetails,
   AccordionSummary,
   Backdrop,
-  Box,
   CircularProgress,
   Divider,
   Tab,
@@ -13,16 +12,18 @@ import {
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import React from "react";
 import { useUserContext } from "../../context/UserContext";
-import PropTypes from "prop-types";
+import { getSpecificUserVisits } from "../../api";
 
 export default function Visits(props) {
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(true);
   const [allVisits, setAllVisits] = React.useState([]);
-  const { user, visits, setVisits } = useUserContext();
+  const { user } = useUserContext();
   const [selectedTab, setSelectedTab] = React.useState(0);
   const { selectedPatientId } = props;
   let patientId = user.id;
+  let userType = user.type;
   if (selectedPatientId) {
+    userType = "patient";
     patientId = selectedPatientId;
   }
 
@@ -30,19 +31,127 @@ export default function Visits(props) {
     setSelectedTab(newValue);
   };
 
-  //   React.useEffect(() => {
-  //     setIsLoading(true);
-  //     getSpecificUserVisits(patientId).then((response) => {
-  //       setDiagnoses(
-  //         response.map(({ id, ...rest }) => {
-  //           return rest;
-  //         })
-  //       );
-  //     });
-  //     setTimeout(() => {
-  //       setIsLoading(false);
-  //     }, 300);
-  //   }, [setDiagnoses, patientId]);
+  const todaysVisitsHelper = () => {
+    return allVisits
+      .filter((visit) => visit.date === new Date().toISOString().split("T")[0])
+      .map((visit) => {
+        return (
+          <Accordion>
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              sx={{ backgroundColor: "#1572A1" }}
+            >
+              <Typography color="white">
+                {visit.date} - {visit.doctor.department.hospital.name}
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails sx={{ backgroundColor: "#9AD0EC" }}>
+              <Typography>Clinic: {visit.doctor.department.name}</Typography>
+              <Typography>
+                Doctor: {visit.doctor.name + " " + visit.doctor.surname}
+              </Typography>
+              <Typography>Hour: {visit.startHour}</Typography>
+              <Divider></Divider>
+              <Typography>
+                Documents:{" "}
+                {visit.documents.map((document) => (
+                  <link src={document.images.url}>{document.name}</link>
+                ))}
+              </Typography>
+              <Typography>
+                Prescription: {visit.prescription?.content}
+              </Typography>
+            </AccordionDetails>
+          </Accordion>
+        );
+      });
+  };
+
+  const pastVisitsHelper = () => {
+    return allVisits
+      .filter((visit) => visit.date < new Date().toISOString().split("T")[0])
+      .map((visit) => {
+        return (
+          <Accordion>
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              sx={{ backgroundColor: "#1572A1" }}
+            >
+              <Typography color="white">
+                {visit.date} - {visit.doctor.department.hospital.name}
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails sx={{ backgroundColor: "#9AD0EC" }}>
+              <Typography>Clinic: {visit.doctor.department.name}</Typography>
+              <Typography>
+                Doctor: {visit.doctor.name + " " + visit.doctor.surname}
+              </Typography>
+              <Typography>Hour: {visit.startHour}</Typography>
+              <Divider></Divider>
+              <Typography>
+                Documents:{" "}
+                {visit.documents.map((document) => (
+                  <link src={document.images.url}>{document.name}</link>
+                ))}
+              </Typography>
+              <Typography>
+                Prescription: {visit.prescription?.content}
+              </Typography>
+            </AccordionDetails>
+          </Accordion>
+        );
+      });
+  };
+
+  const futureVisitsHelper = () => {
+    return allVisits
+      .filter((visit) => visit.date > new Date().toISOString().split("T")[0])
+      .map((visit) => {
+        return (
+          <Accordion>
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              sx={{ backgroundColor: "#1572A1" }}
+            >
+              <Typography color="white">
+                {visit.date} - {visit.doctor.department.hospital.name}
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails sx={{ backgroundColor: "#9AD0EC" }}>
+              <Typography>Clinic: {visit.doctor.department.name}</Typography>
+              <Typography>
+                Doctor: {visit.doctor.name + " " + visit.doctor.surname}
+              </Typography>
+              <Typography>Hour: {visit.startHour}</Typography>
+              <Divider></Divider>
+              <Typography>
+                Documents:{" "}
+                {visit.documents.map((document) => (
+                  <link src={document.images.url}>{document.name}</link>
+                ))}
+              </Typography>
+              <Typography>
+                Prescription: {visit.prescription?.content}
+              </Typography>
+            </AccordionDetails>
+          </Accordion>
+        );
+      });
+  };
+
+  React.useEffect(() => {
+    setIsLoading(true);
+    getSpecificUserVisits(userType, patientId).then((response) => {
+      setAllVisits(
+        response.map(({ id, ...rest }) => {
+          return rest;
+        })
+      );
+    });
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 300);
+  }, [setAllVisits, patientId, userType]);
   return isLoading ? (
     <>
       <Backdrop
@@ -59,51 +168,13 @@ export default function Visits(props) {
         onChange={handleTabChange}
         aria-label="basic tabs example"
       >
-        <Tab label="All Visits" />
+        <Tab label="Today's Visits" />
         <Tab label="Future Visits" />
         <Tab label="Past Visits" />
       </Tabs>
-      <div hidden={selectedTab !== 0}>
-        {" "}
-        <Accordion>
-          <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
-            sx={{ backgroundColor: "#1572A1" }}
-          >
-            <Typography color="white">
-              23 Mayıs 2022 - İstanbul hastanesi
-            </Typography>
-          </AccordionSummary>
-          <AccordionDetails sx={{ backgroundColor: "#9AD0EC" }}>
-            <Typography>Clinic: General Surgery</Typography>
-            <Typography>Doctor: Anan Baban</Typography>
-            <Typography>Hour: 9:00</Typography>
-            <Divider></Divider>
-            <Typography>Documents: Link1, Link2, Link3</Typography>
-            <Typography>Prescription: Link1</Typography>
-          </AccordionDetails>
-        </Accordion>
-        <Accordion>
-          <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
-            sx={{ backgroundColor: "#1572A1" }}
-          >
-            <Typography color="white">
-              24 Mayıs 2022 - İstanbul hastanesi
-            </Typography>
-          </AccordionSummary>
-          <AccordionDetails sx={{ backgroundColor: "#9AD0EC" }}>
-            <Typography>Clinic: General Surgery</Typography>
-            <Typography>Doctor: Anan Baban</Typography>
-            <Typography>Hour: 9:00</Typography>
-            <Divider></Divider>
-            <Typography>Documents: Link1, Link2, Link3</Typography>
-            <Typography>Prescription: Link1</Typography>
-          </AccordionDetails>
-        </Accordion>
-      </div>
-      <div hidden={selectedTab !== 1}>Future Visits</div>
-      <div hidden={selectedTab !== 2}>Past Visits</div>
+      <div hidden={selectedTab !== 0}>{todaysVisitsHelper()}</div>
+      <div hidden={selectedTab !== 1}>{futureVisitsHelper()}</div>
+      <div hidden={selectedTab !== 2}>{pastVisitsHelper()}</div>
     </div>
   );
 }

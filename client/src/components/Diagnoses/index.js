@@ -22,6 +22,7 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import Select from "@mui/material/Select";
 import {
   addNewPatientDiagnose,
+  approveDiagnose,
   getAllDiagnoses,
   getSpecificUserDiagnoses,
 } from "../../api";
@@ -32,6 +33,7 @@ export default function Diagnoses(props) {
   const handleModalOpen = () => setOpenModal(true);
   const handleModalClose = () => setOpenModal(false);
   const [isApproveButton, setIsApproveButton] = React.useState(false);
+  const [selectedDiagnose, setSelectedDiagnose] = React.useState(0);
 
   const [allDiagnoses, setAllDiagnoses] = React.useState([]);
 
@@ -64,26 +66,7 @@ export default function Diagnoses(props) {
   React.useEffect(() => {
     setIsLoading(true);
     getSpecificUserDiagnoses(patientId).then((response) => {
-      setDiagnoses(
-        response.map(({ id, ...rest }) => {
-          ////////////TODO: GOTO DOCTOR PROFILE ON CLICK
-          if (rest.doctor) {
-            const doctorId = rest.doctor.name;
-            delete rest.doctor;
-            rest["doctorId"] = doctorId;
-          } else {
-            delete rest.doctor;
-            rest["doctorId"] = "-";
-          }
-          const diagnoseName = rest.diagnose.name;
-          delete rest.diagnose;
-          rest["diagnoseName"] = diagnoseName;
-          const data = Object.values(rest);
-          const lastItem = data.pop();
-          data.unshift(lastItem);
-          return data;
-        })
-      );
+      setDiagnoses(response);
     });
     getAllDiagnoses().then((response) => {
       setAllDiagnoses(response);
@@ -107,6 +90,7 @@ export default function Diagnoses(props) {
     setNewDiagnose(event.target.value);
   };
 
+  ///////////// TODO: Doctor id
   const handleAddPatientDiagnose = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -116,39 +100,33 @@ export default function Diagnoses(props) {
     });
     if (response) {
       ////////////TODO: GOTO DOCTOR PROFILE ON CLICK
-
-      response["doctorId"] = "-";
-
-      delete response.patient;
-      delete response.id;
-      const diagnoseName = response.diagnose.name;
-      delete response.diagnose;
-      response["diagnoseName"] = diagnoseName;
-      const data = Object.values(response);
-      const lastItem = data.pop();
-      data.unshift(lastItem);
-      setDiagnoses([...diagnoses, data]);
+      setDiagnoses([...diagnoses, response]);
       handleModalClose();
     }
   };
 
-  const options = {
+  let options = {
     filterType: "checkbox",
-    showResponsive: true,
     onRowSelectionChange: (
       currentRowsSelected,
       AllRowsSelected,
       rowsSelected
     ) => {
-      console.log(AllRowsSelected);
       if (rowsSelected.length === 0) {
         setIsApproveButton(false);
       } else {
+        setSelectedDiagnose(AllRowsSelected[0].index);
         setIsApproveButton(true);
       }
     },
     selectableRows: "single",
   };
+  if (user.type === "patient") {
+    options = {
+      filterType: "checkbox",
+      selectableRows: "single",
+    };
+  }
 
   return isLoading ? (
     <>
@@ -179,7 +157,24 @@ export default function Diagnoses(props) {
       </div>
       <MUIDataTable
         title={"Diagnoses"}
-        data={diagnoses}
+        data={diagnoses.map(({ id, ...rest }) => {
+          ////////////TODO: GOTO DOCTOR PROFILE ON CLICK
+          if (rest.doctor) {
+            const doctorId = rest.doctor.name;
+            delete rest.doctor;
+            rest["doctorId"] = doctorId;
+          } else {
+            delete rest.doctor;
+            rest["doctorId"] = "-";
+          }
+          const diagnoseName = rest.diagnose.name;
+          delete rest.diagnose;
+          rest["diagnoseName"] = diagnoseName;
+          const data = Object.values(rest);
+          const lastItem = data.pop();
+          data.unshift(lastItem);
+          return data;
+        })}
         columns={columns}
         options={options}
       />
@@ -224,7 +219,15 @@ export default function Diagnoses(props) {
           </Box>
         </DialogContent>
       </Dialog>
-      <Button sx={{ display: `${isApproveButton ? "block" : "none"}` }}>
+      <Button
+        onClick={(e) => {
+          approveDiagnose(patientId, diagnoses[selectedDiagnose].id);
+          getSpecificUserDiagnoses(patientId).then((response) => {
+            setDiagnoses(response);
+          });
+        }}
+        sx={{ display: `${isApproveButton ? "block" : "none"}` }}
+      >
         Approve
       </Button>
     </>

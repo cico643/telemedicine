@@ -23,6 +23,7 @@ import PatientDiagnoses from "../components/Doctor/PatientDiagnoses";
 import PatientMedications from "../components/Doctor/PatientMedications";
 import PatientVisits from "../components/Doctor/PatientVisits";
 import Visits from "../components/Visits";
+import Colleagues from "../components/Doctor/Colleagues";
 
 function Copyright() {
   return (
@@ -204,9 +205,11 @@ export default function Paperbase() {
       case "Summary":
         return <Summary></Summary>;
       case "Appointment":
-        return <Appointment></Appointment>;
+        return <Appointment setSelectedId={setSelectedId}></Appointment>;
       case "Visits":
         return <Visits></Visits>;
+      case "Colleagues":
+        return <Colleagues></Colleagues>;
       case "PatientSummary":
         return (
           <PatientSummary

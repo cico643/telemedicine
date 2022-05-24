@@ -20,83 +20,15 @@ import {
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-
-const apiCities = [
-  { id: 1, name: "Adana" },
-  { id: 2, name: "Adıyaman" },
-  { id: 3, name: "Afyon" },
-  { id: 4, name: "Ağrı" },
-];
-
-const apiDistricts = [
-  { id: 1, sehir_ID: 1, name: "Yüreğir" },
-  { id: 2, sehir_ID: 1, name: "Seyhan" },
-  { id: 3, sehir_ID: 1, name: "Ceyhan" },
-  { id: 4, sehir_ID: 1, name: "Çukurova" },
-  { id: 5, sehir_ID: 1, name: "Sarıçam" },
-  { id: 6, sehir_ID: 1, name: "Kozan" },
-  { id: 7, sehir_ID: 1, name: "Feke" },
-  { id: 8, sehir_ID: 2, name: "Besni" },
-  { id: 9, sehir_ID: 2, name: "Çelikhan" },
-  { id: 10, sehir_ID: 2, name: "Gerger" },
-  { id: 11, sehir_ID: 2, name: "Gölbaşı" },
-  { id: 12, sehir_ID: 2, name: "Kâhta" },
-  { id: 13, sehir_ID: 2, name: "Samsat" },
-  { id: 14, sehir_ID: 2, name: "Sincik" },
-  { id: 15, sehir_ID: 3, name: "Başmakçı" },
-  { id: 16, sehir_ID: 3, name: "Bayat" },
-  { id: 17, sehir_ID: 3, name: "Bolvadin" },
-  { id: 18, sehir_ID: 3, name: "Çay" },
-  { id: 19, sehir_ID: 3, name: "Çobanlar" },
-  { id: 20, sehir_ID: 3, name: "Dazkırı" },
-  { id: 21, sehir_ID: 4, name: "Diyadin" },
-  { id: 22, sehir_ID: 4, name: "Doğubayazıt" },
-  { id: 23, sehir_ID: 4, name: "Eleşkirt" },
-  { id: 24, sehir_ID: 4, name: "Hamur" },
-  { id: 25, sehir_ID: 4, name: "Patnos" },
-  { id: 26, sehir_ID: 4, name: "Taşlıçay" },
-  { id: 27, sehir_ID: 4, name: "Tutak" },
-];
-
-const apiHospitals = [
-  { id: 1, name: "Adana Yüreğir Hastanesi", ilce_ID: 1 },
-  { id: 8, name: "Özel Adana Yüreğir Hastanesi", ilce_ID: 1 },
-  { id: 2, name: "Adana Seyhan Hastanesi", ilce_ID: 2 },
-  { id: 3, name: "Adana Ceyhan Hastanesi", ilce_ID: 3 },
-  { id: 4, name: "AdıYaman Besni Hastanesi", ilce_ID: 8 },
-  { id: 5, name: "Afyon Çelikhan Hastanesi", ilce_ID: 9 },
-  { id: 6, name: "Afyon Gerger Hastanesi", ilce_ID: 10 },
-  { id: 7, name: "Afyon Başmakçı Hastanesi", ilce_ID: 15 },
-];
-
-const apiClinics = [
-  { id: 1, name: "General Surgery", hospital_ID: 1 },
-  { id: 4, name: "Family Medicine", hospital_ID: 1 },
-  { id: 1, name: "General Surgery", hospital_ID: 2 },
-  { id: 2, name: "Eye Diseases", hospital_ID: 2 },
-  { id: 5, name: "Child Health and Diseases", hospital_ID: 2 },
-  { id: 1, name: "General Surgery", hospital_ID: 3 },
-  { id: 3, name: "Neurology", hospital_ID: 3 },
-  { id: 6, name: "Dentistry", hospital_ID: 3 },
-  { id: 2, name: "Eye Diseases", hospital_ID: 5 },
-  { id: 1, name: "General Surgery", hospital_ID: 8 },
-  { id: 4, name: "Family Medicine", hospital_ID: 8 },
-  { id: 2, name: "Eye Diseases", hospital_ID: 8 },
-  { id: 5, name: "Child Health and Diseases", hospital_ID: 8 },
-];
-
-const apiDoctors = [
-  { id: 1, name: "Doktor Adam", clinic_ID: 1, hospital_ID: 1 },
-  { id: 2, name: "Doktor Kadın", clinic_ID: 1, hospital_ID: 1 },
-  { id: 3, name: "Doktor Tarım", clinic_ID: 4, hospital_ID: 1 },
-  { id: 4, name: "Doktor Plak", clinic_ID: 2, hospital_ID: 2 },
-  { id: 5, name: "Doktor Top", clinic_ID: 2, hospital_ID: 3 },
-  { id: 6, name: "Doktor Kedi", clinic_ID: 3, hospital_ID: 2 },
-  { id: 7, name: "Doktor Köpek", clinic_ID: 1, hospital_ID: 8 },
-  { id: 8, name: "Doktor At", clinic_ID: 1, hospital_ID: 8 },
-  { id: 9, name: "Doktor Terzi", clinic_ID: 5, hospital_ID: 8 },
-  { id: 10, name: "Doktor Kör", clinic_ID: 8, hospital_ID: 8 },
-];
+import {
+  addNewAppointment,
+  getAllCitiesAndDistricts,
+  getAllClinicsByHospitalId,
+  getAllDoctorsByHospitalIdAndClinicId,
+  getAllHospitalsByProvinceAndDistrict,
+  searchBookedHours,
+} from "../../api";
+import { useUserContext } from "../../context/UserContext";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -106,7 +38,7 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-export default function Appointment() {
+export default function Appointment(props) {
   /////////////////// SELECTED VALUES
   const [selectedCity, setSelectedCity] = React.useState("");
   const [selectedDistrict, setSelectedDistrict] = React.useState("");
@@ -116,6 +48,9 @@ export default function Appointment() {
   const [startDate, setStartDate] = React.useState(new Date());
   const [selectedHour, setSelectedHour] = React.useState("");
   const [modalOpen, setModalOpen] = React.useState(false);
+  const [bookedHours, setBookedHours] = React.useState([]);
+  const { user } = useUserContext();
+  const { setSelectedId } = props;
 
   /////////////// ALLL CITIES, DISTRICTS, HOSPITAL, DOCTORS ETC
   const [allCities, setAllCities] = React.useState([]);
@@ -194,71 +129,144 @@ export default function Appointment() {
   }, []);
 
   ///////////// FETCH DATA FROM API
-  const fetchCities = () => {
-    setTimeout(() => {
-      setAllCities(apiCities);
-      setIsCitySelectorDisabled(false);
-    }, "1000");
+  const fetchCities = async () => {
+    const data = await getAllCitiesAndDistricts();
+    setAllCities(data);
+    setIsCitySelectorDisabled(false);
   };
 
-  const fetchDistricts = (cityId) => {
-    setTimeout(() => {
-      setAllDistricts(
-        apiDistricts.filter(function (e) {
-          return e.sehir_ID === cityId;
-        })
-      );
-      setIsDistrictSelectorDisabled(false);
-    }, "1000");
+  const fetchDistricts = (cityProvince) => {
+    const data = allCities.find((e) => e.province === cityProvince).districts;
+    setAllDistricts(data);
+    setIsDistrictSelectorDisabled(false);
   };
 
-  const fetchHospitals = (districtId) => {
-    setTimeout(() => {
-      setAllHospitals(
-        apiHospitals.filter(function (e) {
-          return e.ilce_ID === districtId;
-        })
-      );
-      setIsHospitalSelectorDisabled(false);
-    }, "1000");
+  const fetchHospitals = (districtName) => {
+    getAllHospitalsByProvinceAndDistrict(selectedCity, districtName).then(
+      (data) => {
+        setAllHospitals(data);
+        setIsHospitalSelectorDisabled(false);
+      }
+    );
   };
 
   const fetchClinics = (hospitalId) => {
-    setTimeout(() => {
-      setAllClinics(
-        apiClinics.filter(function (e) {
-          return e.hospital_ID === hospitalId;
-        })
-      );
+    getAllClinicsByHospitalId(hospitalId).then((data) => {
+      setAllClinics(data);
       setIsClinicSelectorDisabled(false);
-    }, "1000");
+    });
   };
 
   const fetchDoctors = (clinicId) => {
-    setTimeout(() => {
-      setAllDoctors(
-        apiDoctors.filter(function (e) {
-          return e.clinic_ID === clinicId && selectedHospital === e.hospital_ID;
-        })
-      );
-      setIsDoctorSelectorDisabled(false);
-    }, "1000");
+    getAllDoctorsByHospitalIdAndClinicId(selectedHospital, clinicId).then(
+      (data) => {
+        setAllDoctors(data);
+        setIsDoctorSelectorDisabled(false);
+      }
+    );
   };
 
   ////////////////// MENU ITEM HELPER
   const menuItemHelper = (values) => {
+    if (values) {
+      return values.map((value) => {
+        return <MenuItem value={value.id}>{value.name}</MenuItem>;
+      });
+    }
+    return [];
+  };
+
+  const cityItemHelper = (values) => {
     return values.map((value) => {
-      return <MenuItem value={value.id}>{value.name}</MenuItem>;
+      return <MenuItem value={value.province}>{value.province}</MenuItem>;
     });
   };
 
-  const appointmentHoursHelper = (appointments) => {
-    return;
+  const districtItemHelper = (values) => {
+    return values.map((value) => {
+      return <MenuItem value={value}>{value}</MenuItem>;
+    });
+  };
+
+  const appointmentHoursHelper = (bookedHours) => {
+    const times = [
+      "09:00",
+      "10:00",
+      "11:00",
+      "12:00",
+      "13:00",
+      "14:00",
+      "15:00",
+      "16:00",
+      "17:00",
+      "18:00",
+    ];
+
+    return times.map((hour) => {
+      if (hour === selectedHour) {
+        return (
+          <Item sx={{ backgroundColor: "#ff0000", color: "white" }}>
+            {hour}
+          </Item>
+        );
+      }
+      if (bookedHours.includes(hour)) {
+        return (
+          <Item sx={{ backgroundColor: "#9A86A4", color: "white" }}>
+            {hour}
+          </Item>
+        );
+      }
+
+      return (
+        <Item
+          sx={{ cursor: "pointer", backgroundColor: "#120a8f", color: "white" }}
+          onClick={(e) => {
+            setSelectedHour(e.target.textContent);
+          }}
+        >
+          {hour}
+        </Item>
+      );
+    });
   };
 
   //////////////////////////RETURN
   return (
     <Grid container direction="column" justifyContent="flex-start">
+      <Dialog open={modalOpen} onClose={() => setModalOpen(false)}>
+        <DialogTitle>Select Time</DialogTitle>
+        <DialogContent>
+          <Stack direction={{ xs: "column", sm: "row" }} spacing={0.5}>
+            {appointmentHoursHelper(bookedHours)}
+          </Stack>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              setModalOpen(false);
+              setSelectedHour("");
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={() => {
+              addNewAppointment({
+                doctorId: selectedDoctor,
+                patientId: user.id,
+                date: startDate.toISOString().split("T")[0],
+                startHour: selectedHour,
+              }).then((data) => {
+                setModalOpen(false);
+                setSelectedId("Visits");
+              });
+            }}
+          >
+            Add
+          </Button>
+        </DialogActions>
+      </Dialog>
       <div style={{ width: "100%" }}>
         <Typography sx={{ fontFamily: "Roboto, sans-serif" }} variant="h4">
           Make An Appointment
@@ -275,7 +283,7 @@ export default function Appointment() {
           label="City"
           onChange={handleCityChange}
         >
-          {menuItemHelper(allCities)}
+          {cityItemHelper(allCities)}
         </Select>
       </FormControl>
       <FormControl
@@ -291,7 +299,7 @@ export default function Appointment() {
           label="District"
           onChange={handleDistrictChange}
         >
-          {menuItemHelper(allDistricts)}
+          {districtItemHelper(allDistricts)}
         </Select>
       </FormControl>
       <FormControl
@@ -359,29 +367,18 @@ export default function Appointment() {
         sx={{ marginTop: "10px" }}
         variant="contained"
         disabled={isDoctorSelectorDisabled}
-        onClick={() => setModalOpen(true)}
+        onClick={() => {
+          setModalOpen(true);
+          searchBookedHours(
+            selectedDoctor,
+            startDate.toISOString().split("T")[0]
+          ).then((data) => {
+            setBookedHours(data);
+          });
+        }}
       >
         Search
       </Button>
-
-      <Dialog open={modalOpen} onClose={() => setModalOpen(false)}>
-        <DialogTitle>Select Time</DialogTitle>
-        <DialogContent>
-          <Stack direction={{ xs: "column", sm: "row" }} spacing={0.5}>
-            <Item>9:00</Item>
-            <Item>10:00</Item>
-            <Item>11:00</Item>
-            <Item>13:00</Item>
-            <Item>14:00</Item>
-            <Item>15:00</Item>
-            <Item>16:00</Item>
-            <Item>17:00</Item>
-          </Stack>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setModalOpen(false)}>Cancel</Button>
-        </DialogActions>
-      </Dialog>
     </Grid>
   );
 }

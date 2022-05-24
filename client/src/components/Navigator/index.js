@@ -50,13 +50,12 @@ const doctorCategories = [
       },
       { id: "Patients", icon: <PeopleIcon /> },
       { id: "Colleagues", icon: <SickIcon /> },
-      { id: "Appointments", icon: <CalendarTodayIcon /> },
+      { id: "Visits", icon: <CalendarTodayIcon /> },
     ],
   },
   {
     id: "Actions",
     children: [
-      { id: "Appointment", icon: <CalendarTodayIcon /> },
       { id: "Informing Relatives", icon: <CallIcon /> },
       { id: "Sensor Data", icon: <MonitorHeartIcon /> },
     ],
