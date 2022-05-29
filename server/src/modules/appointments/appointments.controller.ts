@@ -161,10 +161,9 @@ export class AppointmentsController {
     }
   }
 
-  @Get('/:appointmentId/prescriptions/:prescriptionId')
+  @Get('/prescriptions/:prescriptionId')
   @HttpCode(200)
   async getPrescriptionOfGivenAppointment(
-    @Param('appointmentId') appointmentId: string,
     @Param('prescriptionId') prescriptionId: string,
   ) {
     try {
@@ -172,7 +171,7 @@ export class AppointmentsController {
         prescriptionId,
       );
       this.logger.log(
-        `Fetched prescription of appointment [appointmentId: ${appointmentId}]`,
+        `Fetched prescription [prescriptionId: ${prescriptionId}]`,
         AppointmentsController.name,
       );
       return prescription;

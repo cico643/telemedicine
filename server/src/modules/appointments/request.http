@@ -52,7 +52,7 @@ Content-Type: application/json
 }
 
 ### Get specific prescription by its Id
-GET http://localhost:5000/appointments/360e8780-0167-4f63-802a-6c5d69db478b/prescriptions/3e602867-6d32-4c6b-b03d-756e5c9d4c96
+GET http://localhost:5000/appointments/prescriptions/3e602867-6d32-4c6b-b03d-756e5c9d4c96
 
 
 ###### DOCUMENTS
