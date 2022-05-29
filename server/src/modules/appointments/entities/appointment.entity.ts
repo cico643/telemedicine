@@ -14,7 +14,7 @@ import { Document } from './document.entity';
 
 @Entity()
 export class Appointment {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: number;
 
   @Column({ type: 'date' })

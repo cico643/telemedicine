@@ -12,6 +12,8 @@ import { CreateAppointmentDto } from './dtos/create-appointment.dto';
 import { Appointment } from './entities/appointment.entity';
 import { Document } from './entities/document.entity';
 import { Prescription } from './entities/prescription.entity';
+import { PrescriptionMedication } from './entities/prescriptionMedication.entity';
+import { MedicationsService } from '../users/services/medications.service';
 
 @Injectable()
 export class AppointmentsService {
@@ -23,6 +25,7 @@ export class AppointmentsService {
     @InjectRepository(Prescription)
     private prescriptionsRepository: Repository<Prescription>,
     private usersService: UsersService,
+    private medicationsService: MedicationsService,
     private filesService: FilesService,
   ) {}
 
@@ -65,12 +68,12 @@ export class AppointmentsService {
     return appointments;
   }
 
-  async getAppointment(id: number) {
+  async getAppointment(id: string) {
     const appointment = await this.appointmentsRepository.findOne(id);
     return appointment;
   }
 
-  async addNoteToAppointment(id: number, doctorId: number, body: AddNoteDto) {
+  async addNoteToAppointment(id: string, doctorId: number, body: AddNoteDto) {
     const appointment = await this.appointmentsRepository.findOne(id);
     if (appointment.doctor.id !== doctorId) {
       throw new HttpException(
@@ -86,7 +89,7 @@ export class AppointmentsService {
   async addPrescription(
     addPrescriptionDto: AddPrescriptionDto,
     doctorId: number,
-    appointmentId: number,
+    appointmentId: string,
   ) {
     const appointment = await this.appointmentsRepository.findOne(
       appointmentId,
@@ -97,15 +100,27 @@ export class AppointmentsService {
         HttpStatus.BAD_REQUEST,
       );
     }
+
+    const prescriptionMedications = await Promise.all(
+      addPrescriptionDto.prescriptionMedications.map(async (e) => {
+        const medication = await this.medicationsService.getMedicationById(
+          e.medicationId,
+        );
+        delete e.medicationId;
+        return { ...e, medication };
+      }),
+    );
+
     const prescription = await this.prescriptionsRepository.create({
-      content: addPrescriptionDto.content,
       appointment,
+      prescriptionMedications,
     });
+
     await this.prescriptionsRepository.save(prescription);
     return prescription;
   }
 
-  async getPrescription(prescriptionId: number) {
+  async getPrescription(prescriptionId: string) {
     const prescription = await this.prescriptionsRepository.findOne(
       prescriptionId,
     );
@@ -114,7 +129,7 @@ export class AppointmentsService {
 
   async addDocument(
     addDocumentDto: AddDocumentDto,
-    id: number,
+    id: string,
     doctorId: number,
   ) {
     const appointment = await this.appointmentsRepository.findOne(id, {
@@ -164,7 +179,7 @@ export class AppointmentsService {
     }
   }
 
-  async getDocumentsOfGivenAppointment(appointmentId: number) {
+  async getDocumentsOfGivenAppointment(appointmentId: string) {
     const appointment = await this.appointmentsRepository.findOne(
       appointmentId,
       {

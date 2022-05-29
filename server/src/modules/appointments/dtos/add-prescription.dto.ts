@@ -1,9 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsArray, IsNotEmpty } from 'class-validator';
+
+interface IPrescriptionMedications {
+  signatura: string;
+  medicationId: number;
+}
 
 export class AddPrescriptionDto {
   @ApiProperty({ required: true })
-  @IsString()
+  @IsArray()
   @IsNotEmpty()
-  content: string;
+  prescriptionMedications: IPrescriptionMedications[];
 }

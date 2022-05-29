@@ -38,25 +38,6 @@ export class AppointmentsController {
     private appointmentsService: AppointmentsService,
   ) {}
 
-  @Post()
-  @Roles(UserRole.Admin, UserRole.Patient)
-  @HttpCode(201)
-  async addAppointment(
-    @Body() body: CreateAppointmentDto,
-    @Session() session: SessionType,
-  ) {
-    try {
-      const appointment = await this.appointmentsService.addAppointment(body);
-      this.logger.log(
-        `Appointment added by user [userId: ${session.context.id}]`,
-        AppointmentsController.name,
-      );
-      return appointment;
-    } catch (err) {
-      return genericErrorHandler(err);
-    }
-  }
-
   @Get('/search/patients?')
   @HttpCode(200)
   async searchForPatientsOfDoctor(
@@ -119,7 +100,7 @@ export class AppointmentsController {
 
   @Get('/:id')
   @HttpCode(200)
-  async getAppointment(@Param('id', ParseIntPipe) id: number) {
+  async getAppointment(@Param('id') id: string) {
     try {
       const appointment = await this.appointmentsService.getAppointment(id);
       this.logger.log(
@@ -136,7 +117,7 @@ export class AppointmentsController {
   @Roles(UserRole.Doctor)
   @HttpCode(200)
   async addNoteToAppointment(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id') id: string,
     @Session() session: SessionType,
     @Body() body: AddNoteDto,
   ) {
@@ -162,7 +143,7 @@ export class AppointmentsController {
   async addPrescription(
     @Body() body: AddPrescriptionDto,
     @Session() session: SessionType,
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id') id: string,
   ) {
     try {
       const prescription = await this.appointmentsService.addPrescription(
@@ -183,8 +164,8 @@ export class AppointmentsController {
   @Get('/:appointmentId/prescriptions/:prescriptionId')
   @HttpCode(200)
   async getPrescriptionOfGivenAppointment(
-    @Param('appointmentId', ParseIntPipe) appointmentId: number,
-    @Param('prescriptionId', ParseIntPipe) prescriptionId: number,
+    @Param('appointmentId') appointmentId: string,
+    @Param('prescriptionId') prescriptionId: string,
   ) {
     try {
       const prescription = await this.appointmentsService.getPrescription(
@@ -205,7 +186,7 @@ export class AppointmentsController {
   @HttpCode(201)
   async addDocument(
     @Body() body: AddDocumentDto,
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id') id: string,
     @Session() session: SessionType,
   ) {
     try {
@@ -231,7 +212,7 @@ export class AppointmentsController {
   async addImageForDocument(
     @Session() session: SessionType,
     @UploadedFile() file,
-    @Param('appointmentId', ParseIntPipe) appointmentId: number,
+    @Param('appointmentId') appointmentId: string,
     @Param('documentId', ParseIntPipe) documentId: number,
   ) {
     try {
@@ -271,7 +252,7 @@ export class AppointmentsController {
   @Get('/:appointmentId/documents')
   @HttpCode(200)
   async getDocumentsOfGivenAppointment(
-    @Param('appointmentId', ParseIntPipe) appointmentId: number,
+    @Param('appointmentId') appointmentId: string,
   ) {
     try {
       const documents =
@@ -283,6 +264,25 @@ export class AppointmentsController {
         AppointmentsController.name,
       );
       return documents;
+    } catch (err) {
+      return genericErrorHandler(err);
+    }
+  }
+
+  @Post()
+  @Roles(UserRole.Admin, UserRole.Patient)
+  @HttpCode(201)
+  async addAppointment(
+    @Body() body: CreateAppointmentDto,
+    @Session() session: SessionType,
+  ) {
+    try {
+      const appointment = await this.appointmentsService.addAppointment(body);
+      this.logger.log(
+        `Appointment added by user [userId: ${session.context.id}]`,
+        AppointmentsController.name,
+      );
+      return appointment;
     } catch (err) {
       return genericErrorHandler(err);
     }

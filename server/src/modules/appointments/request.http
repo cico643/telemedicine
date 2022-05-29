@@ -35,15 +35,24 @@ GET http://localhost:5000/appointments/search/patient?doctorId=1
 ###### PRESCRIPTIONS
 
 ### Add new prescription
-POST http://localhost:5000/appointments/2/prescriptions
+POST http://localhost:5000/appointments/360e8780-0167-4f63-802a-6c5d69db478b/prescriptions
 Content-Type: application/json
 
 {
-  "content": "1. Tab. Crocin - 650 mg (Paracetamol) 1 - 1 - 1 * 3 Days, Take after food"
+  "prescriptionMedications": [
+    {
+      "signatura": "1 - 1 - 1 * 3 Days, Take after food",
+      "medicationId": 1
+    },
+    {
+      "signatura": "1 tab PO q6h",
+      "medicationId": 2
+    }
+  ]
 }
 
 ### Get specific prescription by its Id
-GET http://localhost:5000/appointments/1/prescriptions/1
+GET http://localhost:5000/appointments/360e8780-0167-4f63-802a-6c5d69db478b/prescriptions/3e602867-6d32-4c6b-b03d-756e5c9d4c96
 
 
 ###### DOCUMENTS

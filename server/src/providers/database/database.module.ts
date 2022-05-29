@@ -23,6 +23,7 @@ import { PatientMedication } from '../../modules/users/entities/patientMedicatio
 import { Relative } from '../../modules/users/entities/relative.entity';
 import { User } from '../../modules/users/entities/user.entity';
 import PublicFile from '../s3/publicFile.entity';
+import { PrescriptionMedication } from '../../modules/appointments/entities/prescriptionMedication.entity';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import PublicFile from '../s3/publicFile.entity';
         Prescription,
         PatientDiagnose,
         PatientMedication,
+        PrescriptionMedication,
       ],
       synchronize: true,
     }),

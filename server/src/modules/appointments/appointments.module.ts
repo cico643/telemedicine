@@ -7,10 +7,16 @@ import { AppointmentsService } from './appointments.service';
 import { Appointment } from './entities/appointment.entity';
 import { Document } from './entities/document.entity';
 import { Prescription } from './entities/prescription.entity';
+import { PrescriptionMedication } from './entities/prescriptionMedication.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Appointment, Prescription, Document]),
+    TypeOrmModule.forFeature([
+      Appointment,
+      Prescription,
+      Document,
+      PrescriptionMedication,
+    ]),
     UsersModule,
     FilesModule,
   ],

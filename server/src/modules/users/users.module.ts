@@ -34,6 +34,6 @@ import { Relative } from './entities/relative.entity';
   ],
   controllers: [UsersController, DiagnosesController, MedicationsController],
   providers: [UsersService, DiagnosesService, MedicationsService, Logger],
-  exports: [UsersService, TypeOrmModule],
+  exports: [UsersService, TypeOrmModule, MedicationsService],
 })
 export class UsersModule {}
