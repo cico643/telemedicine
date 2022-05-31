@@ -29,7 +29,6 @@ import { AddDocumentDto } from './dtos/add-document.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { multerOptions } from 'src/lib/multerOptions';
 
-@UseGuards(AuthGuard)
 @Controller('appointments')
 @ApiTags('appointments')
 export class AppointmentsController {
@@ -39,6 +38,7 @@ export class AppointmentsController {
   ) {}
 
   @Get('/search/patients?')
+  @UseGuards(AuthGuard)
   @HttpCode(200)
   async searchForPatientsOfDoctor(
     @Query('doctorId', ParseIntPipe) doctorId: number,
@@ -58,6 +58,7 @@ export class AppointmentsController {
   }
 
   @Get('/search/doctor?')
+  @UseGuards(AuthGuard)
   @HttpCode(200)
   async searchForBookedHoursOfDoctor(
     @Query('doctorId', ParseIntPipe) doctorId: number,
@@ -80,6 +81,7 @@ export class AppointmentsController {
   }
 
   @Get('/search?')
+  @UseGuards(AuthGuard)
   @HttpCode(200)
   async getAppointmentsOfGivenUser(
     @Query('type') type: string,
@@ -99,6 +101,7 @@ export class AppointmentsController {
   }
 
   @Get('/:id')
+  @UseGuards(AuthGuard)
   @HttpCode(200)
   async getAppointment(@Param('id') id: string) {
     try {
@@ -249,6 +252,7 @@ export class AppointmentsController {
   }
 
   @Get('/:appointmentId/documents')
+  @UseGuards(AuthGuard)
   @HttpCode(200)
   async getDocumentsOfGivenAppointment(
     @Param('appointmentId') appointmentId: string,

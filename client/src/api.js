@@ -259,3 +259,15 @@ export const addPrescription = async (body, appointmentId) => {
   );
   return data;
 };
+
+export const getPrescriptionById = async (prescriptionId) => {
+  let data;
+  try {
+    data = await axios.get(
+      `${baseUrl}/appointments/prescriptions/${prescriptionId}`
+    );
+  } catch (err) {
+    throw new Error(err);
+  }
+  return data.data;
+};
