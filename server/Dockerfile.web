@@ -1,0 +1,27 @@
+FROM node:17.9.0-buster-slim as builder
+
+WORKDIR /app
+
+COPY package.json .
+COPY yarn.lock .
+
+RUN yarn
+
+COPY . .
+
+RUN yarn build
+
+FROM node:17.9.0-buster-slim as runner
+
+WORKDIR /app
+
+COPY --from=builder /app/package.json .
+COPY --from=builder /app/yarn.lock .
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/nest-cli.json .
+
+RUN yarn install --production
+
+ENV NODE_ENV production
+
+CMD ["yarn", "start:prod"]

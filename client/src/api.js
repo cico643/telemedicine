@@ -1,12 +1,12 @@
 import axios from "axios";
 
-const baseUrl = "http://localhost:5000";
+const baseUrl = "https://teletip-marmara.herokuapp.com";
 
 ////////////////////////              AUTH
 
 export const SignIn = async (body) => {
   const { data } = await axios.post(`${baseUrl}/auth/signin`, body, {
-    withCredentials: true,
+    withCredentials: true
   });
   return data;
 };
@@ -23,14 +23,14 @@ export const SignOut = async () => {
 
 export const getCurrentUser = async () => {
   const { data } = await axios.get(`${baseUrl}/auth/me`, {
-    withCredentials: true,
+    withCredentials: true
   });
   return data;
 };
 
 export const getSpecificUser = async (id, type) => {
   const { data } = await axios.get(`${baseUrl}/users/${id}?type=${type}`, {
-    withCredentials: true,
+    withCredentials: true
   });
   return data;
 };
@@ -39,14 +39,14 @@ export const getSpecificUser = async (id, type) => {
 
 export const addNewRelative = async (id, body) => {
   const { data } = await axios.post(`${baseUrl}/users/${id}/relatives`, body, {
-    withCredentials: true,
+    withCredentials: true
   });
   return data;
 };
 
 export const getSpecificUserRelatives = async (id) => {
   const { data } = await axios.get(`${baseUrl}/users/${id}/relatives`, {
-    withCredentials: true,
+    withCredentials: true
   });
   return data;
 };
@@ -57,7 +57,7 @@ export const getSpecificUserMedications = async (id) => {
   const { data } = await axios.get(
     `${baseUrl}/users/${id}/patient-medications`,
     {
-      withCredentials: true,
+      withCredentials: true
     }
   );
   return data;
@@ -68,7 +68,7 @@ export const addNewPatientMedication = async (id, body) => {
     `${baseUrl}/users/${id}/patient-medications`,
     body,
     {
-      withCredentials: true,
+      withCredentials: true
     }
   );
   return data;
@@ -76,7 +76,7 @@ export const addNewPatientMedication = async (id, body) => {
 
 export const getAllMedications = async () => {
   const { data } = await axios.get(`${baseUrl}/medications`, {
-    withCredentials: true,
+    withCredentials: true
   });
   return data;
 };
@@ -85,7 +85,7 @@ export const getAllMedications = async () => {
 
 export const getSpecificUserDiagnoses = async (id) => {
   const { data } = await axios.get(`${baseUrl}/users/${id}/patient-diagnoses`, {
-    withCredentials: true,
+    withCredentials: true
   });
   return data;
 };
@@ -95,7 +95,7 @@ export const addNewPatientDiagnose = async (id, body, type) => {
     `${baseUrl}/users/${id}/patient-diagnoses?type=${type}`,
     body,
     {
-      withCredentials: true,
+      withCredentials: true
     }
   );
   return data;
@@ -103,7 +103,7 @@ export const addNewPatientDiagnose = async (id, body, type) => {
 
 export const getAllDiagnoses = async () => {
   const { data } = await axios.get(`${baseUrl}/diagnoses`, {
-    withCredentials: true,
+    withCredentials: true
   });
   return data;
 };
@@ -116,15 +116,15 @@ export const changeYourAvatar = async (body) => {
     headers: {
       accept: "application/json",
       "Accept-Language": "en-US,en;q=0.8",
-      "Content-Type": `multipart/form-data; boundary=${body._boundary}`,
-    },
+      "Content-Type": `multipart/form-data; boundary=${body._boundary}`
+    }
   });
   return data;
 };
 
 export const deleteYourPreviousAvatar = async () => {
   const { data } = await axios.delete(`${baseUrl}/users/avatar`, {
-    withCredentials: true,
+    withCredentials: true
   });
   return data;
 };
@@ -132,7 +132,7 @@ export const deleteYourPreviousAvatar = async () => {
 //////////// Book an Appointment
 export const getAllCitiesAndDistricts = async () => {
   const { data } = await axios.get(`${baseUrl}/cities`, {
-    withCredentials: true,
+    withCredentials: true
   });
   return data;
 };
@@ -144,7 +144,7 @@ export const getAllHospitalsByProvinceAndDistrict = async (
   const { data } = await axios.get(
     `${baseUrl}/hospitals/search?province=${province}&district=${district}`,
     {
-      withCredentials: true,
+      withCredentials: true
     }
   );
   return data;
@@ -154,7 +154,7 @@ export const getAllClinicsByHospitalId = async (hospitalId) => {
   const { data } = await axios.get(
     `${baseUrl}/hospitals/${hospitalId}/departments`,
     {
-      withCredentials: true,
+      withCredentials: true
     }
   );
   return data;
@@ -167,7 +167,7 @@ export const getAllDoctorsByHospitalIdAndClinicId = async (
   const { data } = await axios.get(
     `${baseUrl}/hospitals/${hospitalId}/departments/${clinicId}/doctors`,
     {
-      withCredentials: true,
+      withCredentials: true
     }
   );
   return data;
@@ -177,7 +177,7 @@ export const searchBookedHours = async (doctorId, date) => {
   const { data } = await axios.get(
     `${baseUrl}/appointments/search/doctor?doctorId=${doctorId}&date=${date}`,
     {
-      withCredentials: true,
+      withCredentials: true
     }
   );
   return data.map((hour) => {
@@ -187,7 +187,7 @@ export const searchBookedHours = async (doctorId, date) => {
 
 export const addNewAppointment = async (body) => {
   const { data } = await axios.post(`${baseUrl}/appointments/`, body, {
-    withCredentials: true,
+    withCredentials: true
   });
   return data;
 };

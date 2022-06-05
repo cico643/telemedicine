@@ -6,10 +6,12 @@ import logger from './lib/logger';
 import { RedisService } from './providers/redis/redis.service';
 import { session } from './common/middlewares/session.middleware';
 import cookieParser from 'cookie-parser';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import helmet from 'helmet';
 const cors = require('cors');
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     logger,
   });
 
@@ -26,10 +28,12 @@ async function bootstrap() {
 
   // Middleware
   //app.use(cors());
+  app.set('trust proxy', 1);
   app.enableCors({
-    origin: 'http://*',
+    origin: 'https://teletip-marmara.netlify.app',
     credentials: true,
   });
+  app.use(helmet());
   app.use(session(redisService.instance));
   app.use(cookieParser(SESSION_SECRET));
 

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import path from 'path';
 import {
+  NODE_ENV,
   POSTGRES_DB,
   POSTGRES_HOST,
   POSTGRES_PASSWORD,
@@ -28,6 +28,7 @@ import { PrescriptionMedication } from '../../modules/appointments/entities/pres
 @Module({
   imports: [
     TypeOrmModule.forRoot({
+      ssl: NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
       type: 'postgres',
       host: POSTGRES_HOST,
       port: Number(POSTGRES_PORT),
@@ -52,7 +53,7 @@ import { PrescriptionMedication } from '../../modules/appointments/entities/pres
         PatientMedication,
         PrescriptionMedication,
       ],
-      synchronize: true,
+      synchronize: false,
     }),
   ],
 })
