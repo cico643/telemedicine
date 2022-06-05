@@ -53,7 +53,7 @@ import { PrescriptionMedication } from '../../modules/appointments/entities/pres
         PatientMedication,
         PrescriptionMedication,
       ],
-      synchronize: false,
+      synchronize: true,
     }),
   ],
 })
