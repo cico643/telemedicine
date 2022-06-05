@@ -17,7 +17,7 @@ import {
   Tab,
   Tabs,
   TextField,
-  Typography,
+  Typography
 } from "@mui/material";
 import QRCode from "qrcode.react";
 import RemoveIcon from "@mui/icons-material/Remove";
@@ -32,7 +32,7 @@ import {
   addDocumentToAppointment,
   addPrescription,
   getAllMedications,
-  getSpecificUserVisits,
+  getSpecificUserVisits
 } from "../../api";
 import { useNavigate } from "react-router-dom";
 
@@ -54,7 +54,7 @@ export default function Visits(props) {
   }
 
   const [inputFields, setInputFields] = React.useState([
-    { id: uuidv4(), medicationId: "", signatura: "" },
+    { id: uuidv4(), medicationId: "", signatura: "" }
   ]);
 
   const handleTabChange = (event, newValue) => {
@@ -115,7 +115,7 @@ export default function Visits(props) {
   const handleAddFields = () => {
     setInputFields([
       ...inputFields,
-      { id: uuidv4(), medicationId: "", signatura: "" },
+      { id: uuidv4(), medicationId: "", signatura: "" }
     ]);
   };
 
@@ -126,7 +126,7 @@ export default function Visits(props) {
         prescriptionMedications: inputFields.map((inputField) => {
           delete inputField.id;
           return inputField;
-        }),
+        })
       },
       selectedAppointment
     ).then((response) => {
@@ -209,10 +209,22 @@ export default function Visits(props) {
                 sx={{ marginLeft: "80%" }}
                 variant="contained"
                 disabled={
-                  visit.startHour.slice(0, 2) <=
-                    new Date().toISOString().split("T")[1].slice(0, 2) &&
-                  new Date().toISOString().split("T")[1].slice(0, 2) <
-                    Number(visit.startHour.slice(0, 2)) + 1
+                  !(
+                    visit.startHour.slice(0, 2) <=
+                      new Date(
+                        new Date().getTime() - new Date().getTimezoneOffset()
+                      )
+                        .toISOString()
+                        .split("T")[1]
+                        .slice(0, 2) &&
+                    new Date(
+                      new Date().getTime() - new Date().getTimezoneOffset()
+                    )
+                      .toISOString()
+                      .split("T")[1]
+                      .slice(0, 2) <
+                      Number(visit.startHour.slice(0, 2)) + 1
+                  )
                 }
                 onClick={(e) => navigate(`/live/${visit.id}`)}
               >
