@@ -27,7 +27,7 @@ async function bootstrap() {
   // Middleware
   //app.use(cors());
   app.enableCors({
-    origin: 'http://localhost:3000',
+    origin: 'http://*',
     credentials: true,
   });
   app.use(session(redisService.instance));
