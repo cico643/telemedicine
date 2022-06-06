@@ -35,6 +35,7 @@ import {
   getSpecificUserVisits
 } from "../../api";
 import { useNavigate } from "react-router-dom";
+import moment from "moment";
 
 export default function Visits(props) {
   const [selectedAppointment, setSelectedAppointment] = React.useState("");
@@ -187,7 +188,7 @@ export default function Visits(props) {
                 Prescription:{" "}
                 {visit.prescription ? (
                   <QRCode
-                    value={`http://localhost:3000/prescription/${visit.prescription.id}`}
+                    value={`https://teletip-marmara.netlify.app/prescription/${visit.prescription.id}`}
                   />
                 ) : (
                   <IconButton
@@ -210,20 +211,8 @@ export default function Visits(props) {
                 variant="contained"
                 disabled={
                   !(
-                    visit.startHour.slice(0, 2) <=
-                      new Date(
-                        new Date().getTime() - new Date().getTimezoneOffset()
-                      )
-                        .toISOString()
-                        .split("T")[1]
-                        .slice(0, 2) &&
-                    new Date(
-                      new Date().getTime() - new Date().getTimezoneOffset()
-                    )
-                      .toISOString()
-                      .split("T")[1]
-                      .slice(0, 2) <
-                      Number(visit.startHour.slice(0, 2)) + 1
+                    visit.startHour.slice(0, 2) <= moment().hours() &&
+                    moment().hours() < Number(visit.startHour.slice(0, 2)) + 1
                   )
                 }
                 onClick={(e) => navigate(`/live/${visit.id}`)}
