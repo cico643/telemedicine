@@ -27,8 +27,12 @@ function Copyright(props) {
       {...props}
     >
       {"Copyright © "}
-      <Link color="inherit" href="#">
-        Your Website
+      <Link
+        color="inherit"
+        href="
+https://teletip-marmara.netlify.app/"
+      >
+        TeleTıp-Marmara
       </Link>{" "}
       {new Date().getFullYear()}
       {"."}

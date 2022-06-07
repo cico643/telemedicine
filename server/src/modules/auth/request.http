@@ -1,5 +1,5 @@
 ### Create a new user
-POST http://localhost:5000/auth/signup
+POST https://teletip-marmara.herokuapp.com/auth/signup
 Content-Type: application/json
 
 {
@@ -12,17 +12,17 @@ Content-Type: application/json
     "height": 185,
     "weight": 80,
     "bloodType": "B+",
-    "type" : "doctor"
+    "type" : "admin"
 }
 
 ### Sign in as an existing user
-POST http://localhost:5000/auth/signin
+POST https://teletip-marmara.herokuapp.com/auth/signin
 Content-Type: application/json
 
 {
     "email": "test1@test.com",
     "password": "123test",
-    "type": "patient"
+    "type": "admin"
 }
 
 ### Sign out

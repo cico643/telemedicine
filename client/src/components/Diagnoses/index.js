@@ -163,7 +163,7 @@ export default function Diagnoses(props) {
         data={diagnoses.map(({ id, ...rest }) => {
           ////////////TODO: GOTO DOCTOR PROFILE ON CLICK
           if (rest.doctor) {
-            const doctorId = rest.doctor.name;
+            const doctorId = rest.doctor.name + " " + rest.doctor.surname;
             delete rest.doctor;
             rest["doctorId"] = doctorId;
           } else {

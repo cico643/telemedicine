@@ -17,9 +17,10 @@ import {
   Tab,
   Tabs,
   TextField,
-  Typography
+  Typography,
+  ImageListItem,
+  ImageList,
 } from "@mui/material";
-import QRCode from "qrcode.react";
 import RemoveIcon from "@mui/icons-material/Remove";
 import AddBoxIcon from "@mui/icons-material/AddBox";
 import AddIcon from "@mui/icons-material/Add";
@@ -32,10 +33,11 @@ import {
   addDocumentToAppointment,
   addPrescription,
   getAllMedications,
-  getSpecificUserVisits
+  getSpecificUserVisits,
 } from "../../api";
-import { useNavigate } from "react-router-dom";
 import moment from "moment";
+import { Link, useNavigate } from "react-router-dom";
+import ZoomableImage from "../ZoomableImage";
 
 export default function Visits(props) {
   const [selectedAppointment, setSelectedAppointment] = React.useState("");
@@ -55,7 +57,7 @@ export default function Visits(props) {
   }
 
   const [inputFields, setInputFields] = React.useState([
-    { id: uuidv4(), medicationId: "", signatura: "" }
+    { id: uuidv4(), medicationId: "", signatura: "" },
   ]);
 
   const handleTabChange = (event, newValue) => {
@@ -64,16 +66,13 @@ export default function Visits(props) {
 
   const handleAddDocument = async ({ target }) => {
     let data = new FormData();
+    console.log(target.id.slice(20));
     data.append("file", target.files[0]);
     const response = await addDocumentName(
       { name: target.files[0].name },
-      Number(target.id.charAt(target.id.length - 1))
+      target.id.slice(20)
     );
-    await addDocumentToAppointment(
-      data,
-      Number(target.id.charAt(target.id.length - 1)),
-      response.id
-    );
+    await addDocumentToAppointment(data, target.id.slice(20), response.id);
     await getSpecificUserVisits(userType, patientId).then((response) => {
       setAllVisits(response);
     });
@@ -116,7 +115,7 @@ export default function Visits(props) {
   const handleAddFields = () => {
     setInputFields([
       ...inputFields,
-      { id: uuidv4(), medicationId: "", signatura: "" }
+      { id: uuidv4(), medicationId: "", signatura: "" },
     ]);
   };
 
@@ -127,7 +126,7 @@ export default function Visits(props) {
         prescriptionMedications: inputFields.map((inputField) => {
           delete inputField.id;
           return inputField;
-        })
+        }),
       },
       selectedAppointment
     ).then((response) => {
@@ -156,41 +155,69 @@ export default function Visits(props) {
             </AccordionSummary>
             <AccordionDetails sx={{ backgroundColor: "#9AD0EC" }}>
               <Typography>Clinic: {visit.doctor.department.name}</Typography>
-              <Typography>
-                Doctor: {visit.doctor.name + " " + visit.doctor.surname}
-              </Typography>
+              {user.type === "patient" ? (
+                <Typography>
+                  Doctor: {visit.doctor.name + " " + visit.doctor.surname}
+                </Typography>
+              ) : (
+                <Typography>
+                  Patient: {visit.patient.name + " " + visit.patient.surname}
+                </Typography>
+              )}
+
               <Typography>Hour: {visit.startHour}</Typography>
               <Divider></Divider>
               <Typography>
                 Documents:{" "}
-                {visit.documents.map((document) => {
-                  return (
-                    <a href={document.image?.url || ""}>{document.name}</a>
-                  );
-                })}
-                <label
-                  htmlFor={`document-button-file${visit.id}`}
-                  style={{ cursor: "pointer" }}
+                <ImageList
+                  sx={{ width: 200 }}
+                  cols={visit.documents.length}
+                  gap={5}
                 >
-                  <IconButton color="primary" component="span">
-                    <AddBoxIcon fontSize="small" />
-                  </IconButton>
-                  <input
-                    accept="image/*"
-                    id={`document-button-file${visit.id}`}
-                    type="file"
-                    style={{ display: "none" }}
-                    onChange={handleAddDocument}
-                  />
-                </label>
+                  {visit.documents.map((document) => {
+                    if (document.image) {
+                      return (
+                        <ImageListItem>
+                          <ZoomableImage
+                            src={document.image.url}
+                          ></ZoomableImage>
+                        </ImageListItem>
+                      );
+                    }
+                    return <ImageListItem></ImageListItem>;
+                  })}
+                </ImageList>
+                {user.type === "doctor" ? (
+                  <label
+                    htmlFor={`document-button-file${visit.id}`}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <IconButton color="primary" component="span">
+                      <AddBoxIcon fontSize="small" />
+                    </IconButton>
+                    <input
+                      accept="image/*"
+                      id={`document-button-file${visit.id}`}
+                      type="file"
+                      style={{ display: "none" }}
+                      onChange={handleAddDocument}
+                    />
+                  </label>
+                ) : (
+                  ""
+                )}
               </Typography>
               <Typography>
                 Prescription:{" "}
                 {visit.prescription ? (
-                  <QRCode
-                    value={`https://teletip-marmara.netlify.app/prescription/${visit.prescription.id}`}
-                  />
-                ) : (
+                  <Link
+                    to={`/prescription/${visit.prescription.id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Prescription
+                  </Link>
+                ) : user.type === "doctor" ? (
                   <IconButton
                     onClick={(e) => {
                       setSelectedAppointment(visit.id);
@@ -203,6 +230,8 @@ export default function Visits(props) {
                   >
                     <AddBoxIcon fontSize="small" />
                   </IconButton>
+                ) : (
+                  ""
                 )}
               </Typography>
 
@@ -330,9 +359,48 @@ export default function Visits(props) {
         <Tab label="Past Visits" />
       </Tabs>
 
-      <div hidden={selectedTab !== 0}>{todaysVisitsHelper()}</div>
-      <div hidden={selectedTab !== 1}>{futureVisitsHelper()}</div>
-      <div hidden={selectedTab !== 2}>{pastVisitsHelper()}</div>
+      <div hidden={selectedTab !== 0}>
+        {todaysVisitsHelper().length === 0 ? (
+          <Typography
+            sx={{ marginTop: "10px" }}
+            variant="h4"
+            gutterBottom
+            component="div"
+          >
+            You don't have any visits today.
+          </Typography>
+        ) : (
+          todaysVisitsHelper()
+        )}
+      </div>
+      <div hidden={selectedTab !== 1}>
+        {futureVisitsHelper().length === 0 ? (
+          <Typography
+            sx={{ marginTop: "10px" }}
+            variant="h4"
+            gutterBottom
+            component="div"
+          >
+            You don't have any visits.
+          </Typography>
+        ) : (
+          futureVisitsHelper()
+        )}
+      </div>
+      <div hidden={selectedTab !== 2}>
+        {pastVisitsHelper().length === 0 ? (
+          <Typography
+            sx={{ marginTop: "10px" }}
+            variant="h4"
+            gutterBottom
+            component="div"
+          >
+            You don't have any visits.
+          </Typography>
+        ) : (
+          pastVisitsHelper()
+        )}
+      </div>
       <Dialog open={open} onClose={handleClose} fullWidth>
         <DialogTitle>Add a Prescription</DialogTitle>
         <DialogContent>

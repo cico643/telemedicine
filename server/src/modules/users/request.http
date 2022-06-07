@@ -7,11 +7,11 @@ GET http://localhost:5000/users/1?type=patient
 
 
 ### Add new diagnose
-POST http://localhost:5000/diagnoses
+POST https://teletip-marmara.herokuapp.com/diagnoses
 Content-Type: application/json
 
 {
-    "name": "Epilepsy"
+    "name": "Dementia"
 }
 
 ### Get all diagnoses
@@ -25,12 +25,12 @@ GET http://localhost:5000/diagnoses/1
 DELETE http://localhost:5000/diagnoses/3
 
 ### Add new patient diagnose
-POST http://localhost:5000/users/1/patient-diagnoses?type=doctor
+POST https://teletip-marmara.herokuapp.com/users/1/patient-diagnoses?type=patient
 Content-Type: application/json
 
 {
     "diagnoseId": 3,
-    "startDate": "2020-05-05"
+    "startDate": "2020-06-06"
 }
 
 ### Get all diagnoses of a patient
@@ -54,7 +54,7 @@ Content-Type: application/json
 ######## MEDICATIONS
 
 ### Add new medication
-POST http://localhost:5000/medications
+POST https://teletip-marmara.herokuapp.com/medications
 Content-Type: application/json
 
 {

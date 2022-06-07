@@ -17,6 +17,12 @@ import MonitorHeartIcon from "@mui/icons-material/MonitorHeart";
 import CallIcon from "@mui/icons-material/Call";
 import { useAuth } from "../../context/AuthContext";
 
+// { id: "Informing Relatives", icon: <CallIcon /> },
+// { id: "Sensor Data", icon: <MonitorHeartIcon /> },
+// {
+//   id: "Actions",
+//   children: [],
+// },
 const patientCategories = [
   {
     id: "Profile",
@@ -33,11 +39,7 @@ const patientCategories = [
   },
   {
     id: "Actions",
-    children: [
-      { id: "Appointment", icon: <CalendarTodayIcon /> },
-      { id: "Informing Relatives", icon: <CallIcon /> },
-      { id: "Sensor Data", icon: <MonitorHeartIcon /> },
-    ],
+    children: [{ id: "Appointment", icon: <CalendarTodayIcon /> }],
   },
 ];
 const doctorCategories = [
@@ -51,13 +53,6 @@ const doctorCategories = [
       { id: "Patients", icon: <PeopleIcon /> },
       { id: "Colleagues", icon: <SickIcon /> },
       { id: "Visits", icon: <CalendarTodayIcon /> },
-    ],
-  },
-  {
-    id: "Actions",
-    children: [
-      { id: "Informing Relatives", icon: <CallIcon /> },
-      { id: "Sensor Data", icon: <MonitorHeartIcon /> },
     ],
   },
 ];

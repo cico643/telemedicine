@@ -11,11 +11,19 @@ import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import React from "react";
+import React, { useEffect } from "react";
 import { useUserContext } from "../../context/UserContext";
+import {
+  getSpecificUserDiagnoses,
+  getSpecificUserMedications,
+  getSpecificUserVisits,
+} from "../../api";
 
 export default function Summary({ classes }) {
   const { user } = useUserContext();
+  const [lastMedication, setLastMedication] = React.useState(null);
+  const [lastDiagnoses, setLastDiagnoses] = React.useState(null);
+  const [lastVisit, setLastVisit] = React.useState(null);
   const bodyIndexCalculator = () => {
     const bmi = user.weight / ((user.height / 100) * (user.height / 100));
     return parseFloat(bmi).toFixed(2);
@@ -30,6 +38,20 @@ export default function Summary({ classes }) {
       return "You are underWeight";
     }
   };
+
+  useEffect(() => {
+    if (user.type === "patient") {
+      getSpecificUserMedications(user.id).then((response) => {
+        setLastMedication(response.find((x) => x !== undefined));
+      });
+      getSpecificUserDiagnoses(user.id).then((response) =>
+        setLastDiagnoses(response.find((x) => x !== undefined))
+      );
+      getSpecificUserVisits(user.type, user.id).then((response) =>
+        setLastVisit(response.find((x) => x !== undefined))
+      );
+    }
+  }, [user.id, user.type]);
   return (
     <Grid container spacing={2} alignItems="flex-start">
       <Grid item xs={4}>
@@ -208,90 +230,114 @@ export default function Summary({ classes }) {
           </Card>
         </Grid>
         <Grid item xs={12}>
-          <Accordion
-            sx={{
-              backgroundColor: "#9AD0EC",
-              transition: "0.3s",
-              margin: "5px",
-              boxShadow: "0 8px 40px -12px rgba(0,0,0,0.3)",
-              "&:hover": {
-                boxShadow: "0 16px 70px -12.125px rgba(0,0,0,0.3)",
-              },
-            }}
-          >
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel1a-content"
-              id="panel1a-header"
-            >
-              <Typography sx={{ fontStyle: "italic" }}>
-                Last Appointment
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails sx={{ backgroundColor: "#FBF8F1" }}>
-              <Typography>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Suspendisse malesuada lacus ex, sit amet blandit leo lobortis
-                eget.
-              </Typography>
-            </AccordionDetails>
-          </Accordion>
-          <Accordion
-            sx={{
-              backgroundColor: "#9AD0EC",
-              margin: "5px;",
-              transition: "0.3s",
-              boxShadow: "0 8px 40px -12px rgba(0,0,0,0.3)",
-              "&:hover": {
-                boxShadow: "0 16px 70px -12.125px rgba(0,0,0,0.3)",
-              },
-            }}
-          >
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel1a-content"
-              id="panel1a-header"
-            >
-              <Typography sx={{ fontStyle: "italic" }}>
-                Last Medication
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails sx={{ backgroundColor: "#FBF8F1" }}>
-              <Typography>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Suspendisse malesuada lacus ex, sit amet blandit leo lobortis
-                eget.
-              </Typography>
-            </AccordionDetails>
-          </Accordion>
-          <Accordion
-            sx={{
-              backgroundColor: "#9AD0EC",
-              margin: "5px",
-              boxShadow: "0 8px 40px -12px rgba(0,0,0,0.3)",
-              transition: "0.3s",
-              "&:hover": {
-                boxShadow: "0 16px 70px -12.125px rgba(0,0,0,0.3)",
-              },
-            }}
-          >
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel1a-content"
-              id="panel1a-header"
-            >
-              <Typography sx={{ fontStyle: "italic" }}>
-                Last Diagnose
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails sx={{ backgroundColor: "#FBF8F1" }}>
-              <Typography>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Suspendisse malesuada lacus ex, sit amet blandit leo lobortis
-                eget.
-              </Typography>
-            </AccordionDetails>
-          </Accordion>
+          {user.type === "patient" ? (
+            <>
+              <Accordion
+                sx={{
+                  backgroundColor: "#9AD0EC",
+                  transition: "0.3s",
+                  margin: "5px",
+                  boxShadow: "0 8px 40px -12px rgba(0,0,0,0.3)",
+                  "&:hover": {
+                    boxShadow: "0 16px 70px -12.125px rgba(0,0,0,0.3)",
+                  },
+                }}
+              >
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls="panel1a-content"
+                  id="panel1a-header"
+                >
+                  <Typography sx={{ fontStyle: "italic" }}>
+                    Last Appointment
+                  </Typography>
+                </AccordionSummary>
+                <AccordionDetails sx={{ backgroundColor: "#FBF8F1" }}>
+                  <Typography>
+                    {lastVisit
+                      ? lastVisit.date +
+                        " - " +
+                        lastVisit.doctor.department.hospital.name +
+                        " - " +
+                        lastVisit.doctor.department.name +
+                        " - " +
+                        lastVisit.doctor.name +
+                        " " +
+                        lastVisit.doctor.surname
+                      : "You don't have any records"}
+                  </Typography>
+                </AccordionDetails>
+              </Accordion>
+              <Accordion
+                sx={{
+                  backgroundColor: "#9AD0EC",
+                  margin: "5px;",
+                  transition: "0.3s",
+                  boxShadow: "0 8px 40px -12px rgba(0,0,0,0.3)",
+                  "&:hover": {
+                    boxShadow: "0 16px 70px -12.125px rgba(0,0,0,0.3)",
+                  },
+                }}
+              >
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls="panel1a-content"
+                  id="panel1a-header"
+                >
+                  <Typography sx={{ fontStyle: "italic" }}>
+                    Last Medication
+                  </Typography>
+                </AccordionSummary>
+                <AccordionDetails sx={{ backgroundColor: "#FBF8F1" }}>
+                  <Typography>
+                    {lastMedication
+                      ? lastMedication.medication.name +
+                        ", Daily dosage: " +
+                        lastMedication.dailyDosage
+                      : "You don't have any records"}
+                  </Typography>
+                </AccordionDetails>
+              </Accordion>
+              <Accordion
+                sx={{
+                  backgroundColor: "#9AD0EC",
+                  margin: "5px",
+                  boxShadow: "0 8px 40px -12px rgba(0,0,0,0.3)",
+                  transition: "0.3s",
+                  "&:hover": {
+                    boxShadow: "0 16px 70px -12.125px rgba(0,0,0,0.3)",
+                  },
+                }}
+              >
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls="panel1a-content"
+                  id="panel1a-header"
+                >
+                  <Typography sx={{ fontStyle: "italic" }}>
+                    Last Diagnose
+                  </Typography>
+                </AccordionSummary>
+                <AccordionDetails sx={{ backgroundColor: "#FBF8F1" }}>
+                  <Typography>
+                    {lastDiagnoses
+                      ? lastDiagnoses.diagnose.name +
+                        " " +
+                        (lastDiagnoses.approved
+                          ? "is approved by" +
+                            " " +
+                            lastDiagnoses.doctor.name +
+                            " " +
+                            lastDiagnoses.doctor.surname
+                          : "is not approved")
+                      : "You don't have any records"}
+                  </Typography>
+                </AccordionDetails>
+              </Accordion>
+            </>
+          ) : (
+            ""
+          )}
         </Grid>
       </Grid>
     </Grid>

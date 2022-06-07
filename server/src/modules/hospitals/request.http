@@ -1,7 +1,7 @@
 ####### HOSPITALS
 
 ### Add a new hospital
-POST http://localhost:5000/hospitals/
+POST https://teletip-marmara.herokuapp.com/hospitals/
 Content-Type: application/json
 
 {
@@ -24,7 +24,7 @@ GET http://localhost:5000/hospitals/1
 ####### DEPARTMENTS
 
 ### Add a new department
-POST http://localhost:5000/hospitals/1/departments/
+POST https://teletip-marmara.herokuapp.com/hospitals/1/departments/
 Content-Type: application/json
 
 {
