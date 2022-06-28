@@ -8,7 +8,7 @@ import {
   AWS_ACCESS_KEY_ID,
   AWS_PUBLIC_BUCKET_NAME,
   AWS_SECRET_ACCESS_KEY,
-} from 'src/config';
+} from '../../config';
 import sharp from 'sharp';
 
 @Injectable()
