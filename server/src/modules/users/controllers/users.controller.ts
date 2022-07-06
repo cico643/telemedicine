@@ -15,7 +15,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { genericErrorHandler } from '../../../lib/genericErrorHandler';
 import { UsersService } from '../services/users.service';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -27,6 +27,7 @@ import { UserRole } from '../entities/user.entity';
 import { CreatePatientDiagnoseDto } from '../dtos/create-patient-diagnose.dto';
 import { CreatePatientMedicationDto } from '../dtos/create-patient-medication.dto';
 import { CreateRelativeDto } from '../dtos/create-relative.dto';
+import FileUploadDto from '../dtos/file-upload.dto';
 
 @UseGuards(AuthGuard)
 @ApiTags('users')
@@ -54,6 +55,11 @@ export class UsersController {
 
   @Post('avatar')
   @UseInterceptors(FileInterceptor('file', multerOptions))
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'A new avatar for the user',
+    type: FileUploadDto,
+  })
   @HttpCode(201)
   async addAvatar(@Session() session: SessionType, @UploadedFile() file) {
     try {
