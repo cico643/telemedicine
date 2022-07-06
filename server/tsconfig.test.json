@@ -1,0 +1,4 @@
+{
+  "extends": "./tsconfig.json",
+  "typeRoots": ["src/types/helpers.d.ts"]
+}

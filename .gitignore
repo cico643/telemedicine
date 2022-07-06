@@ -40,3 +40,4 @@ docker.env
 .env
 .env.dev
 .env.production
+.env.test
