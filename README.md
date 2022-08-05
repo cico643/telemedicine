@@ -1,5 +1,8 @@
 # Telemedicine
 
+[Swagger Link To Backend API](http://teletip-marmara.herokuapp.com/api/)  
+[Live Demo Of The App](https://teletip-marmara.netlify.app/)
+
 ## Description
 
 [Telemedicine](https://github.com/cico643/telemedicine) is a fully-fledged full-stack web application that serves certain medical services including booking an appointment, past medication use, hospital-department services, and much more for patients and doctors.
