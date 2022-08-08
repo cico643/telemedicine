@@ -18,7 +18,7 @@
 
 ## Backend API
 
-For the backend API, a monolithic nestjs application has been put together along with Postgresql, TypeORM, Amazon S3 Bucket, Redis(as session cache). REST API conventions were followed throughout the application.
+For the backend API, a monolithic nestjs application has been put together along with Postgresql, TypeORM, Amazon S3 Bucket, Redis(as session cache), ElasticSearch. REST API conventions were followed throughout the application.
 
 ### Database Diagram
 
@@ -37,6 +37,17 @@ A Swagger UI has been implemented to facilitate the inspection of the API. After
 <p align="center">
     <img src="server/photos/swagger.png" />
 </p>
+
+### ElasticSearch
+
+ElasticSearch is also added to the application as a seperate document-oriented database for hospitals module.  
+In the hospitals module, an ElasticSearch index called `hospitals` is created and we can rapidly search for the hospitals in the given city and district.
+
+See:
+
+- `server/src/modules/hospitals/hospitals-search.service.ts`
+- `server/src/modules/hospitals/hospitals.service.ts`
+- `server/src/providers/eliasticsearch/search.module.ts`
 
 ### Caching
 
@@ -68,7 +79,7 @@ Before running up the server, environment variables also need to be defined. To 
 
 ## Running up the docker-compose file
 
-To use a database and redis instances locally for development purposes, a docker-compose.yml has defined to run Postgresql, PgAdmin(Database Monitoring) and Redis.
+To use a database and redis instances locally for development purposes, a docker-compose.yml has defined to run Postgresql, PgAdmin(Database Monitoring), ElasticSearch, Kibana and Redis.
 
 ```bash
 $ cd server/ && docker-compose up

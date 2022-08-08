@@ -8,6 +8,7 @@ import { CreateDepartmentDto } from './dtos/create-department.dto';
 import { CreateHospitalDto } from './dtos/create-hospital.dto';
 import { Department } from './entities/department.entity';
 import { Hospital } from './entities/hospital.entity';
+import HospitalsSearchService from './hospitals-search.service';
 
 export class HospitalsService {
   constructor(
@@ -18,12 +19,14 @@ export class HospitalsService {
     private usersService: UsersService,
     @InjectRepository(Doctor)
     private doctorsRepository: Repository<Doctor>,
+    private hospitalsSearchService: HospitalsSearchService,
   ) {}
 
   async addHospital(hospitalDto: CreateHospitalDto) {
     try {
       const hospital = await this.hospitalsRepository.create(hospitalDto);
       await this.hospitalsRepository.save(hospital);
+      await this.hospitalsSearchService.indexHospital(hospital);
       return hospital;
     } catch (err) {
       throw new HttpException(
@@ -38,7 +41,12 @@ export class HospitalsService {
   }
 
   async getHospitalsForGivenCityDistrict(province: string, district: string) {
-    const hospitals = await this.hospitalsRepository.find({
+    const hospitals =
+      await this.hospitalsSearchService.searchHospitalsForGivenCityDistrict(
+        province,
+        district,
+      );
+    const hospitalss = await this.hospitalsRepository.find({
       where: {
         province,
         district,
